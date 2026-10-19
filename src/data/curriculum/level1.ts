@@ -953,7 +953,7 @@ const checkModule: Module = {
             fen: '3r2k1/5ppp/8/8/8/5n2/5PPP/4R1K1 w - - 0 1',
             solution: ['gxf3'],
             hint: 'The knight is attacking your king AND your rook. Can you get rid of it?',
-            explanation: 'gxf3 captures the checking knight and wins 3 points. Moving the king with Kf1 or Kh1 would be legal, but then the knight captures your rook on e1.',
+            explanation: 'gxf3 captures the checking knight and wins 3 points. Moving the king (Kf1 or Kh1) is legal too, but it lets the knight escape: after Kh1 it simply captures your rook on e1.',
           },
         },
         {
@@ -1727,7 +1727,7 @@ const firstGamesModule: Module = {
           moves: ['f3', 'e5', 'g4', 'Qh4#'],
           caption: 'Fool\'s Mate. 0-1 after Black\'s second move.',
           notes: {
-            1: '1. f3? This pawn move does nothing useful and opens the diagonal between the queen\'s side and the white king.',
+            1: '1. f3? This pawn move does nothing useful and weakens the diagonal that leads from h4 to the white king on e1.',
             2: '1... e5: Black opens a path for the queen and bishop.',
             3: '2. g4?? Another weakening pawn move. The diagonal from h4 to e1 is now wide open.',
             4: '2... Qh4#. The queen checks the king, nothing can block on g3 or f2, and the king has no square to run to. Checkmate!',

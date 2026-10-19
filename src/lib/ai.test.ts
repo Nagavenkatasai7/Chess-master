@@ -35,7 +35,7 @@ describe('OpenRouter client', () => {
         if (url.endsWith('/models')) return new Response(JSON.stringify(MODELS))
         const model = JSON.parse(String(init?.body)).model as string
         calls.push(model)
-        expect((init?.headers as Record<string, string>).Authorization).toBe('Bearer sk-or-test')
+        expect((init?.headers as Record<string, string> | undefined)?.Authorization).toBe('Bearer sk-or-test')
         return model === DEFAULT_MODEL ? new Response('rate limited', { status: 429 }) : sse(['Develop ', 'your ', 'pieces!'])
       }),
     )
@@ -64,7 +64,7 @@ describe('shared coach proxy', () => {
       vi.fn(async (url: string, init?: RequestInit) => {
         if (url === '/api/chat' && !init) return new Response(JSON.stringify({ configured: true }))
         if (url.endsWith('/models')) return new Response(JSON.stringify(MODELS))
-        requests.push({ url, auth: (init?.headers as Record<string, string>).Authorization, model: JSON.parse(String(init?.body)).model })
+        requests.push({ url, auth: (init?.headers as Record<string, string> | undefined)?.Authorization, model: JSON.parse(String(init?.body)).model })
         return sse(['Castle ', 'early.'])
       }),
     )

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import InstallPrompt from '../components/InstallPrompt'
 import { Card, ProgressBar } from '../components/ui'
 import { allLessons } from '../data/curriculum/index'
 import { LEVELS } from '../data/types'
@@ -34,6 +35,8 @@ export default function Home() {
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{settings.playerName ? `Welcome back, ${settings.playerName}` : 'Your road to grandmaster'}</h1>
         <p className="mt-1 text-muted">Learn the ideas, train tactics every day, play, review — repeat. Every grandmaster started exactly where you are.</p>
       </div>
+
+      <InstallPrompt />
 
       {isNew && (
         <Card className="border-accent/50 bg-gradient-to-br from-accent/15 to-transparent">

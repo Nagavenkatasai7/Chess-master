@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import InstallPrompt from '../components/InstallPrompt'
 import { Button, Card, Notice, PageHeader } from '../components/ui'
 import { AiError, listFreeModels, PREFERRED_FREE_MODELS, streamChat, useCoachAvailable, type ModelInfo } from '../lib/ai'
 import { DEFAULT_MODEL, exportProgress, importProgress, resetProgress, updateSettings, useSettings, type Settings as SettingsType } from '../lib/storage'
@@ -216,6 +217,17 @@ export default function Settings() {
           placeholder="Optional"
           className="mt-1 w-full max-w-xs rounded-lg border border-line bg-panel-2 px-3 py-2 text-sm outline-none focus:border-accent"
         />
+      </Card>
+
+      <Card>
+        <h2 className="text-lg font-semibold">📲 Install as an app</h2>
+        <div className="mt-3">
+          <InstallPrompt dismissible={false} />
+        </div>
+        <p className="mt-3 text-xs text-muted">
+          On iPhone, the home-screen app keeps its own copy of your progress, separate from Safari. To carry progress over, use “Export progress” in Safari, then
+          “Import progress” inside the app.
+        </p>
       </Card>
 
       <Card>

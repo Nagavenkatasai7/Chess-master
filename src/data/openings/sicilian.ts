@@ -111,7 +111,7 @@ export const sicilianDefence: Opening = {
         14: 'Develop.',
         16: 'Get ready to castle.',
         17: 'White puts a rook opposite your d6 pawn and queen.',
-        18: '**…e5!** blocks the d-file before White can play e5 with tricks against your queen on d8.',
+        18: '**…e5!** stops White’s e4–e5 break for good, which would have opened the d-file against your queen on d8.',
         19: 'White stops …Bg4.',
         20: 'Now castle. You are a pawn up with a solid position; plans are …Be6 to trade White’s active bishop, …Rc8 and …a6 with …b5.',
       },

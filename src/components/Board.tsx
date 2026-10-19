@@ -138,7 +138,7 @@ export default function Board({
   const boardArrows: Arrow[] = arrows.map((a) => ({ startSquare: a.from, endSquare: a.to, color: a.color ?? 'rgba(240,168,58,0.85)' }))
 
   return (
-    <div className={`relative w-full select-none ${className}`}>
+    <div className={`relative w-full touch-none select-none ${className}`}>
       <Chessboard
         options={{
           position: fen,

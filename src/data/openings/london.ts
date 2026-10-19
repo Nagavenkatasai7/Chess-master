@@ -51,7 +51,7 @@ export const londonSystem: Opening = {
         7: 'c3 again makes d4 rock-solid.',
         8: 'The critical idea: Black attacks b2, which the f4 bishop no longer protects. This is the London’s main weak spot.',
         9: '**Qb3** defends b2 and offers a queen trade; if …Qxb3, axb3 opens the a-file for your rook.',
-        10: 'Black avoids the trade and gains queenside space, cutting your queen off from b3.',
+        10: 'Black avoids the trade and gains queenside space with tempo on your queen.',
         11: 'The queen retreats but keeps an eye on e4 and the b1–h7 diagonal.',
         12: 'Black develops.',
         13: 'Nd2 prepares **e4** to break up Black’s pawn chain; b3 is the other lever against c4. Since …c4 released the pressure on d4, your centre is now very stable.',

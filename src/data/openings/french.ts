@@ -56,7 +56,7 @@ export const frenchDefence: Opening = {
         16: 'Now d4 is attacked four times.',
         17: 'White hits the queen.',
         18: 'A check keeps the queen active.',
-        20: '**…Bb4** trades off a defender of d4. Plans: …Bxd2+, …O-O and …b5, keeping up the pressure on d4.',
+        20: '**…Bb4** challenges the d2 bishop and adds pressure on the a5–e1 diagonal. If 11.Bc3, then 11…b5! hits the a4 knight. Plans: …O-O and …Bd7, keeping up the pressure on d4.',
       },
     },
     {

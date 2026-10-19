@@ -26,6 +26,9 @@ body {
   margin: 0;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  /* No double-tap zoom delay on phones. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Lesson prose rendered by the mini markdown component. */

@@ -55,7 +55,7 @@ export const viennaGame: Opening = {
         14: 'Black blocks the e-file.',
         15: 'Win back a pawn with a centralised queen.',
         16: 'Black develops and prepares to castle.',
-        17: 'Both gambit pawns are back and you lead in development. Plans: O-O-O, Bd3 or Bc4, and Nb5 to hit c7.',
+        17: 'Material is level again and you lead in development. Plans: O-O-O, Bd3 or Bc4, and Nb5 to hit c7.',
       },
     },
     {

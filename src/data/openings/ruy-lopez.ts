@@ -49,7 +49,7 @@ export const ruyLopez: Opening = {
       notes: {
         10: 'The **Open Defence**: Black takes e4, accepting a slightly loose position in return for active pieces.',
         11: 'Do not rush to win the pawn back; open the centre while Black’s king is still uncastled.',
-        12: 'Taking on d4 would open the e-file against Black’s king (Re1!), so Black first kicks the bishop.',
+        12: 'Black first breaks the pin on the c6 knight by kicking the bishop; 6…exd4? would allow Re1 with a strong attack on the e-file.',
         14: 'Black supports the e4 knight with a pawn.',
         15: 'You win back the pawn and gain a strong pawn on **e5** that cramps Black’s kingside.',
         16: 'Black develops and protects d5.',
@@ -99,7 +99,7 @@ export const ruyLopez: Opening = {
         14: 'From f5 the knight eyes d4, e7 and h4.',
         15: 'Queens come off: the famous **Berlin Wall** endgame.',
         16: 'Black’s king has lost the right to castle but is safe; Black has the bishop pair.',
-        17: 'Your assets are the kingside pawn majority with the e5 pawn and extra space. Plans: h3, Rd1, b3 and Bb2, then g4 to drive away the f5 knight. Kramnik used this endgame as Black to beat Kasparov in 2000, so expect a tough, patient fight.',
+        17: 'Your assets are the kingside pawn majority with the e5 pawn and extra space. Plans: h3, Rd1, b3 and Bb2, then g4 to drive away the f5 knight. Kramnik used it as Black to neutralise Kasparov’s 1.e4 in their 2000 world championship match, so expect a tough, patient fight.',
       },
     },
   ],

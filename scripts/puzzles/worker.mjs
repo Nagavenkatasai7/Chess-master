@@ -14,9 +14,10 @@ import { OPENINGS } from './openings.mjs'
 export const CFG = {
   scanNodes: 30000, // per-position scan (~depth 11-12)
   preDepth: 12, // quick uniqueness pre-check at the puzzle position
-  beforeDepth: 14, // eval of the position before the blunder
-  verifyDepth: 18, // MultiPV-2 verification of every solver move
-  replyDepth: 16, // opponent's best reply
+  beforeDepth: 13, // eval of the position before the blunder
+  verifyDepth: 18, // MultiPV-2 verification of the key (first) solver move
+  laterDepth: 16, // MultiPV-2 verification of later solver moves
+  replyDepth: 14, // opponent's best reply
   maxPly: 150,
   minFirstAdv: 230, // solver's first move must win at least this (cp) ...
   minAdv: 200, // ... and keep at least this on later moves
@@ -39,6 +40,8 @@ const PROFILES = [
   { name: 'novice', weight: 28, skill: [0, 2], bookProb: 0.45, bookMax: 6, randomPlies: [0, 2], lapse: 0, scanNodes: 16000, branches: 3 },
   { name: 'casual', weight: 26, skill: [3, 7], bookProb: 0.75, bookMax: 10, randomPlies: [0, 4], lapse: 0.04, lapseSkill: [0, 2], scanNodes: 22000, branches: 3 },
   { name: 'club', weight: 26, skill: [9, 16], bookProb: 0.85, bookMax: 14, randomPlies: [1, 4], lapse: 0.12, lapseSkill: [0, 5], scanNodes: 30000, branches: 2 },
+  // probe: strong, balanced main game; at most positions try a plausible blunder as a side line
+  { name: 'probe', weight: 30, skill: [15, 20], bookProb: 0.9, bookMax: 14, randomPlies: [1, 5], lapse: 0, probe: 0.7, branches: 0, noScan: true },
   {
     name: 'endgame',
     weight: 20,
@@ -125,8 +128,9 @@ function uniqueAdv(best, second) {
 // ---------------------------------------------------------------------------
 
 export class Miner {
-  constructor({ engine, verbose = false, onPuzzle = () => {}, shouldStop = () => false }) {
+  constructor({ engine, verbose = false, onPuzzle = () => {}, shouldStop = () => false, profiles = null }) {
     this.engine = engine
+    this.profiles = profiles
     this.verbose = verbose
     this.onPuzzle = onPuzzle
     this.shouldStop = shouldStop
@@ -166,9 +170,10 @@ export class Miner {
   async playGame(seed) {
     const rng = mulberry32(seed)
     const gameStart = Date.now()
-    const total = PROFILES.reduce((n, p) => n + p.weight, 0)
+    const pool = this.profiles ? PROFILES.filter((p) => this.profiles.includes(p.name)) : PROFILES
+    const total = pool.reduce((n, p) => n + p.weight, 0)
     let roll = rng() * total
-    const profile = PROFILES.find((p) => (roll -= p.weight) < 0) ?? PROFILES[0]
+    const profile = pool.find((p) => (roll -= p.weight) < 0) ?? pool[0]
     const skills = { w: irange(rng, profile.skill), b: irange(rng, profile.skill) }
     const late = profile.lateSkill ? { w: irange(rng, profile.lateSkill), b: irange(rng, profile.lateSkill) } : null
     const book = rng() < profile.bookProb ? pick(rng, OPENINGS) : null
@@ -217,7 +222,7 @@ export class Miner {
 
       // --- scan (skipped when the previous move followed the previous scan's PV: no blunder possible)
       const prev = plies[plies.length - 2]
-      if (ply >= Math.max(3, bookLen) && switched) {
+      if (ply >= Math.max(3, bookLen) && switched && !profile.noScan) {
         if (prev?.scan && prev.pv?.length > 1 && prev.move === prev.pv[0] && (prev.estimated ?? 0) < 2) {
           entry.scan = negate(prev.scan)
           entry.pv = prev.pv.slice(1)
@@ -261,6 +266,22 @@ export class Miner {
         else decided = 0
       }
 
+      // --- probe a plausible blunder (side line; the game itself continues normally)
+      if (profile.probe && ply >= Math.max(bookLen, 8) && found < CFG.maxPuzzlesPerGame + 3 && rng() < profile.probe &&
+        !recentFirst.some((r) => ply - r.ply < 3)) {
+        const t2 = Date.now()
+        const puzzle = await this.probe(chess, rng, { ...game, ply, branch: 0 }, recentFirst)
+        this.stats.msCook += Date.now() - t2
+        if (puzzle) {
+          found++
+          this.stats.puzzles++
+          this.stats.byProfile[profile.name] = (this.stats.byProfile[profile.name] ?? 0) + 1
+          recentFirst.push({ ply, move: puzzle.moves[1] })
+          this.log(`  PUZZLE(probe) ${puzzle.kind} ${puzzle.moves.join(' ')}`)
+          this.onPuzzle(puzzle)
+        }
+      }
+
       // --- move
       const t3 = Date.now()
       let move = null
@@ -279,7 +300,7 @@ export class Miner {
         if (profile.lapse && rng() < profile.lapse) skill = irange(rng, profile.lapseSkill)
         const r = await this.pickMove(chess, skill)
         move = r.move
-        if (!switched && r.score) {
+        if ((!switched || profile.noScan) && r.score) {
           // no scans before the endgame switch: use the move search score to stop lopsided games
           if (Math.abs(scoreValue(r.score)) >= 900) decided++
           else decided = 0
@@ -301,6 +322,29 @@ export class Miner {
     this.stats.msByProfile[profile.name] = (this.stats.msByProfile[profile.name] ?? 0) + (Date.now() - gameStart)
     this.stats.gamesByProfile[profile.name] = (this.stats.gamesByProfile[profile.name] ?? 0) + 1
     return found
+  }
+
+  /**
+   * Look for a move that seems fine to a shallow search but loses to a deeper one
+   * (a "plausible blunder") and try to cook its refutation.
+   */
+  async probe(chess, rng, game, recentFirst) {
+    const fen = chess.fen()
+    const shallow = await this.engine.search(fen, { depth: 4, multipv: 8 })
+    const top = shallow.lines[0]
+    if (!top) return null
+    const plausible = shallow.lines.filter((l) => scoreValue(l.score) >= scoreValue(top.score) - 80).map((l) => l.move)
+    if (plausible.length < 2) return null
+    const deep = await this.engine.search(fen, { depth: 10, multipv: plausible.length, searchmoves: plausible })
+    const best = deep.lines[0]
+    if (!best || Math.abs(scoreValue(best.score)) > 150) return null
+    const traps = deep.lines.filter((l) => l.move !== best.move && scoreValue(l.score) <= -200 && scoreValue(best.score) - scoreValue(l.score) >= 250)
+    if (!traps.length) return null
+    this.stats.candidates++
+    this.stats.probes = (this.stats.probes ?? 0) + 1
+    const m0 = pick(rng, traps).move
+    this.log(`  ply ${game.ply} probe ${m0} (${fmtScore(traps[0].score)} vs best ${best.move} ${fmtScore(best.score)})`)
+    return this.cook(fen, m0, { ...game, probe: true }, recentFirst)
   }
 
   /** Try to build a puzzle where `m0` (played from `p0fen`) is the blunder. */
@@ -345,7 +389,7 @@ export class Miner {
     while (true) {
       const fen = chess.fen()
       const legal = chess.moves().length
-      const r = await e.search(fen, { depth: CFG.verifyDepth, multipv: 2, newGame: true })
+      const r = await e.search(fen, { depth: steps.length ? CFG.laterDepth : CFG.verifyDepth, multipv: 2, newGame: true })
       const [best, second] = r.lines
       if (!best) {
         failReason = 'no-best'
@@ -470,7 +514,7 @@ async function runStandalone() {
   )
   const engine = new Engine({ hash: 32 })
   const out = []
-  const miner = new Miner({ engine, verbose: args.verbose === 'true', onPuzzle: (p) => out.push(p) })
+  const miner = new Miner({ engine, verbose: args.verbose === 'true', onPuzzle: (p) => out.push(p), profiles: args.profile?.split(',') })
   const games = Number(args.games ?? 2)
   const t0 = Date.now()
   for (let i = 0; i < games; i++) await miner.playGame(args.seed ? Number(args.seed) + i : randomInt(2 ** 31))

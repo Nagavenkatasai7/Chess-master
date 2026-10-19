@@ -62,7 +62,7 @@ export const scandinavianDefence: Opening = {
         11: 'White centralises the knight.',
         12: 'Challenge the e5 knight.',
         13: 'White attacks the queen.',
-        14: 'The queen retreats to c7, where Bf4 cannot hit it with tempo.',
+        14: 'The queen retreats to c7, keeping an eye on e5. If White later plays Bf4, the queen drops back to d8.',
         15: 'White prepares Bf4 and O-O-O.',
         16: 'Challenge the c4 knight. Plans: …Be6 or …Bg4, …e6 and castling, with a solid position.',
       },

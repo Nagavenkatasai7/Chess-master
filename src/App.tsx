@@ -57,14 +57,14 @@ function Shell() {
         <p className="mt-auto px-5 py-4 text-xs text-muted">From your first move to grandmaster.</p>
       </aside>
 
-      <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-line bg-panel/95 px-4 py-3 backdrop-blur md:hidden">
+      <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-line bg-panel/95 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] backdrop-blur md:hidden">
         <span className="text-xl">♛</span>
         <span className="font-bold">
           Chess <span className="text-accent">Master</span>
         </span>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:px-6 md:pb-10">
+      <main className="mx-auto max-w-6xl px-4 pb-[calc(env(safe-area-inset-bottom)+6rem)] pt-6 sm:px-6 md:pb-10">
         <Suspense fallback={<p className="text-muted">Loading…</p>}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -82,7 +82,7 @@ function Shell() {
         </Suspense>
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-line bg-panel/95 py-1.5 backdrop-blur md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-line bg-panel/95 pb-[calc(env(safe-area-inset-bottom)+0.375rem)] pt-1.5 backdrop-blur md:hidden">
         {NAV.filter((n) => ['/', '/learn', '/puzzles', '/play', '/openings', '/settings'].includes(n.to)).map((item) => (
           <NavLink
             key={item.to}

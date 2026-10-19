@@ -1,0 +1,98 @@
+import type { Opening } from '../types.ts'
+
+export const kingsIndianDefence: Opening = {
+  id: 'kings-indian-defence',
+  name: 'King’s Indian Defence',
+  eco: 'E60–E99',
+  side: 'black',
+  difficulty: 'advanced',
+  summary:
+    'The King’s Indian is the most aggressive answer to 1.d4: Black allows White a big centre, then counter-attacks it, often with a full-scale kingside pawn storm. The positions are double-edged and dynamic. It suits ambitious attacking players; Fischer, Kasparov and Nakamura made it famous.',
+  ideas: [
+    'Allow White a big centre, then attack it with …e5 or …c5.',
+    'The g7 bishop is your best piece; keep it even when it looks blocked.',
+    'When White closes the centre with d5, attack on the kingside with …Ne8 or …Nd7, …f5 and …f4.',
+    'Against the Sämisch (f3), counter with …c5 or with …Nc6, …a6 and …b5.',
+    'In the Fianchetto Variation, play on the queenside with …a6, …Rb8 and …b5.',
+  ],
+  pitfalls: [
+    'Playing …f5 before preparing it with …Nd7 or …Ne8 can leave holes and lose time.',
+    'Releasing the tension with …exd4 too early often gives White free play in the centre.',
+    'In the Exchange Variation, careless play against Nd5 and Bg5 can drop e7 or c7.',
+    'If you are slow on the kingside, White’s queenside attack (c5, b4) breaks through first.',
+    'Against the Four Pawns Attack, beware of the e5 break before you have finished developing.',
+  ],
+  lines: [
+    {
+      name: 'Classical: Mar del Plata 9.Ne1',
+      moves: ['d4', 'Nf6', 'c4', 'g6', 'Nc3', 'Bg7', 'e4', 'd6', 'Nf3', 'O-O', 'Be2', 'e5', 'O-O', 'Nc6', 'd5', 'Ne7', 'Ne1', 'Nd7', 'Be3', 'f5'],
+      notes: {
+        2: 'Develop and control e4.',
+        4: '**The King’s Indian**: let White build a big centre, then attack it.',
+        6: 'The fianchettoed bishop is the soul of the King’s Indian.',
+        8: 'Hold back in the centre and prepare …e5.',
+        10: 'Castle quickly.',
+        12: '**…e5!** strikes at the centre. (If dxe5 dxe5 Qxd8 Rxd8, the endgame is fine for Black.)',
+        14: 'Pressure d4.',
+        15: 'White closes the centre and grabs queenside space.',
+        16: '**The Mar del Plata**: the knight heads for the kingside to support …f5.',
+        17: 'White re-routes the knight to d3, supporting c5 and f4.',
+        18: 'Prepare …f5.',
+        20: '**…f5!** is the thematic break. Next: …f4, …g5–g4 and a kingside attack, while White attacks on the queenside with c5. A race!',
+      },
+    },
+    {
+      name: 'Exchange Variation: 7.dxe5',
+      moves: ['d4', 'Nf6', 'c4', 'g6', 'Nc3', 'Bg7', 'e4', 'd6', 'Nf3', 'O-O', 'Be2', 'e5', 'dxe5', 'dxe5', 'Qxd8', 'Rxd8', 'Bg5', 'Re8', 'Nd5', 'Nxd5'],
+      notes: {
+        12: 'Strike at the centre with …e5.',
+        13: '**The Exchange Variation**: White trades in the centre, hoping for a quiet game.',
+        16: 'Recapture with the rook.',
+        17: 'Pin the knight; White is eyeing Nd5.',
+        18: 'The rook covers e7 and supports e5, so Nd5 tricks lose their sting.',
+        20: 'Trade the knight. After cxd5 c6, Black is comfortable: the g7 bishop and …c6 undermine White’s centre.',
+      },
+    },
+    {
+      name: 'Sämisch: 5.f3 c5',
+      moves: ['d4', 'Nf6', 'c4', 'g6', 'Nc3', 'Bg7', 'e4', 'd6', 'f3', 'O-O', 'Be3', 'c5', 'Nge2', 'Nc6', 'd5', 'Ne5', 'Ng3', 'e6'],
+      notes: {
+        9: '**The Sämisch**: f3 protects e4 and prepares Be3, Qd2 and a kingside pawn storm with g4 and h4.',
+        10: 'Castle anyway.',
+        12: '**…c5!** strikes at the centre before White’s attack starts. If dxc5 dxc5 Qxd8 Rxd8 Bxc5, …Nc6 gives Black good play for the pawn.',
+        13: 'The knight goes to e2, since f3 is occupied.',
+        14: 'Pressure d4.',
+        15: 'White closes the centre.',
+        16: 'The knight lands on the excellent e5 square.',
+        17: 'White covers f5 and h5 and prepares f4.',
+        18: '**…e6** challenges d5 and opens lines (a Benoni-style structure). Plans: …exd5, …Re8 and …a6 with …b5. Your pieces are very active.',
+      },
+    },
+    {
+      name: 'Fianchetto Variation: Panno set-up',
+      moves: ['d4', 'Nf6', 'c4', 'g6', 'Nf3', 'Bg7', 'g3', 'O-O', 'Bg2', 'd6', 'O-O', 'Nc6', 'Nc3', 'a6', 'd5', 'Na5', 'Nd2', 'c5', 'Qc2', 'Rb8'],
+      notes: {
+        7: '**The Fianchetto Variation**: White mirrors your set-up with a solid kingside fianchetto.',
+        12: '**The Panno**: …Nc6 and …a6 prepare …Rb8 and …b5.',
+        14: 'Prepare …Rb8 and …b5.',
+        15: 'White kicks the knight.',
+        16: 'The knight goes to the rim, but it hits c4 and supports …b5.',
+        17: 'White defends c4.',
+        18: 'Fix the queenside; …b5 is coming.',
+        20: '**…Rb8** prepares …b5 to open lines on the queenside, where the g7 bishop helps. Black has good counterplay.',
+      },
+    },
+    {
+      name: 'Four Pawns Attack: 5.f4',
+      moves: ['d4', 'Nf6', 'c4', 'g6', 'Nc3', 'Bg7', 'e4', 'd6', 'f4', 'O-O', 'Nf3', 'c5', 'd5', 'e6', 'Be2', 'exd5', 'cxd5', 'Bg4', 'O-O', 'Nbd7'],
+      notes: {
+        9: '**The Four Pawns Attack**: White grabs maximum space with four central pawns.',
+        12: '**…c5!** undermines the centre immediately.',
+        14: 'Strike again with …e6: a Benoni structure.',
+        16: 'Open the e-file.',
+        18: '**…Bg4** aims to trade off the f3 knight, a key defender of e5.',
+        20: 'Develop; the knight covers e5. Plans: …Re8, …Bxf3 and …c4 or …Nb6. Watch for White’s e5 break.',
+      },
+    },
+  ],
+}

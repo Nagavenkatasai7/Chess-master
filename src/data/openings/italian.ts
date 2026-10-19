@@ -48,7 +48,7 @@ export const italianGame: Opening = {
       moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Bc5', 'c3', 'Nf6', 'd4', 'exd4', 'cxd4', 'Bb4+', 'Bd2', 'Bxd2+', 'Nbxd2', 'd5', 'exd5', 'Nxd5', 'Qb3'],
       notes: {
         7: 'c3 prepares the d4 break.',
-        9: 'The direct approach: strike in the centre at once, threatening d5 or dxe5.',
+        9: 'The direct approach: strike in the centre at once. The d4 pawn attacks both the c5 bishop and e5.',
         11: 'You now have the ideal **e4 + d4 pawn centre**. Black must hit it immediately or be pushed back by d5 and e5.',
         12: 'The bishop has no good square, so it checks.',
         13: '**Bd2** is the safe answer. (7.Nc3 is the sharp Møller Attack, where White sacrifices material.)',
@@ -73,7 +73,7 @@ export const italianGame: Opening = {
         16: 'Black kicks the g5 knight.',
         17: 'The knight retreats to f3; Nh3 is a playable alternative.',
         18: 'Black chases the knight again and gains space.',
-        19: '**Ne5** is the most active square. Next comes d4 (or f4) to support it, then castling. Stay calm, finish development and the extra pawn can tell.',
+        19: '**Ne5** is the most active square. Next comes d4 to support it (if …Bd6, d4 and …exd3 Nxd3 is the main line), then castling. Stay calm, finish development and the extra pawn can tell.',
       },
     },
     {
@@ -96,7 +96,7 @@ export const italianGame: Opening = {
         8: 'The **Traxler**: Black ignores the threat to f7 and counter-attacks f2. After 5.Nxf7 Bxf2+! the game becomes a tactical jungle.',
         9: 'The safe, strong reply: take the pawn **with check**. Black loses the right to castle.',
         10: 'The king has to step forward. …Ke7 is Black’s most active try.',
-        11: 'On **d5** the bishop stays active and blocks the d-file. If …Nxd5, exd5 attacks the c6 knight.',
+        11: 'On **d5** the bishop is safe and active, eyeing c6 and b7. If …Nxd5, exd5 attacks the c6 knight.',
         12: 'Black opens the c8 bishop.',
         13: '**c3** takes the d4 and b4 squares from Black’s knights and prepares d4.',
         14: 'Black uses the half-open f-file for the rook.',
