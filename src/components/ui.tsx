@@ -29,7 +29,7 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
 
 export function Badge({ children, color = 'var(--color-panel-2)', className = '' }: { children: ReactNode; color?: string; className?: string }) {
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${className}`} style={{ background: color }}>
+    <span className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium ${className}`} style={{ background: color }}>
       {children}
     </span>
   )
