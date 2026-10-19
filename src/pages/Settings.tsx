@@ -2,7 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import InstallPrompt from '../components/InstallPrompt'
 import { Button, Card, Notice, PageHeader } from '../components/ui'
 import { AiError, listFreeModels, PREFERRED_FREE_MODELS, streamChat, useCoachAvailable, type ModelInfo } from '../lib/ai'
-import { DEFAULT_MODEL, exportProgress, importProgress, resetProgress, updateSettings, useSettings, type Settings as SettingsType } from '../lib/storage'
+import { DEFAULT_MODEL, exportProgress, importProgress, resetProgress, updateSettings, useSettings, type CoachEffort, type Settings as SettingsType } from '../lib/storage'
+
+const EFFORTS: { id: CoachEffort; label: string; hint: string }[] = [
+  { id: 'minimal', label: 'Quick', hint: 'Answers in a couple of seconds; shorter explanations.' },
+  { id: 'low', label: 'Balanced', hint: 'Recommended: complete explanations in a few seconds.' },
+  { id: 'medium', label: 'Deep', hint: 'Most thorough, but can take 15+ seconds.' },
+]
 
 const THEMES: { id: SettingsType['boardTheme']; label: string; light: string; dark: string }[] = [
   { id: 'green', label: 'Tournament green', light: '#ebecd0', dark: '#739552' },
@@ -16,6 +22,7 @@ export default function Settings() {
   const { shared } = useCoachAvailable()
   const [keyInput, setKeyInput] = useState(settings.apiKey)
   const [showKey, setShowKey] = useState(false)
+  const [ownKeyOpen, setOwnKeyOpen] = useState(false)
   const [models, setModels] = useState<ModelInfo[] | null>(null)
   const [modelError, setModelError] = useState('')
   const [test, setTest] = useState<{ kind: 'good' | 'bad' | 'info'; text: string } | null>(null)
@@ -68,6 +75,8 @@ export default function Settings() {
     }
   }
 
+  // With a site key configured, the personal-key form is optional and starts hidden.
+  const showKeyForm = !shared || Boolean(settings.apiKey) || ownKeyOpen
   const modelOptions = models ?? []
   const selectedKnown = modelOptions.some((m) => m.id === settings.model)
 
@@ -81,70 +90,77 @@ export default function Settings() {
           The coach explains positions in plain English using a <strong className="text-ink">free</strong> AI model on OpenRouter. Stockfish's analysis is sent along with
           every question, so the explanations are grounded in accurate chess.
         </p>
-        {shared && (
-          <div className="mt-3">
-            <Notice kind="good">
-              ✅ This site has a shared AI coach key, so the coach already works without your own key. Add a personal key below only if you want your own daily
-              request quota.
-            </Notice>
+        {shared && !settings.apiKey && (
+          <div className="mt-3 space-y-3">
+            <Notice kind="good">✅ The AI coach is ready. It is pre-configured with this site's key, so there is nothing to enter.</Notice>
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={runTest}>Test the coach</Button>
+              <Button variant="ghost" onClick={() => setOwnKeyOpen((o) => !o)}>
+                {ownKeyOpen ? 'Hide personal key' : 'Use my own key instead (optional)'}
+              </Button>
+            </div>
           </div>
         )}
-        <ol className="mt-3 list-decimal space-y-1 pl-5 text-sm text-muted">
-          <li>
-            Create a free account at{' '}
-            <a href="https://openrouter.ai" target="_blank" rel="noreferrer" className="text-accent underline">
-              openrouter.ai
-            </a>
-            .
-          </li>
-          <li>
-            Open{' '}
-            <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noreferrer" className="text-accent underline">
-              Settings → API Keys
-            </a>{' '}
-            and create a key. Free models need no credits.
-          </li>
-          <li>Paste it below and press “Test”.</li>
-        </ol>
+        {showKeyForm && (
+          <>
+            <ol className="mt-3 list-decimal space-y-1 pl-5 text-sm text-muted">
+              <li>
+                Create a free account at{' '}
+                <a href="https://openrouter.ai" target="_blank" rel="noreferrer" className="text-accent underline">
+                  openrouter.ai
+                </a>
+                .
+              </li>
+              <li>
+                Open{' '}
+                <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noreferrer" className="text-accent underline">
+                  Settings → API Keys
+                </a>{' '}
+                and create a key. Free models need no credits.
+              </li>
+              <li>Paste it below and press “Test”.</li>
+            </ol>
 
-        <label className="mt-4 block text-sm font-semibold" htmlFor="api-key">
-          API key
-        </label>
-        <div className="mt-1 flex gap-2">
-          <input
-            id="api-key"
-            type={showKey ? 'text' : 'password'}
-            value={keyInput}
-            onChange={(e) => setKeyInput(e.target.value)}
-            placeholder="sk-or-v1-…"
-            autoComplete="off"
-            className="min-w-0 flex-1 rounded-lg border border-line bg-panel-2 px-3 py-2 font-mono text-sm outline-none focus:border-accent"
-          />
-          <Button variant="ghost" onClick={() => setShowKey((s) => !s)}>
-            {showKey ? 'Hide' : 'Show'}
-          </Button>
-        </div>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <Button variant="primary" onClick={saveKey} disabled={keyInput.trim() === settings.apiKey}>
-            Save key
-          </Button>
-          <Button onClick={runTest} disabled={!keyInput.trim() && !shared}>
-            {keyInput.trim() || !shared ? 'Test' : 'Test shared coach'}
-          </Button>
-          {settings.apiKey && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setKeyInput('')
-                updateSettings({ apiKey: '' })
-                setTest(null)
-              }}
-            >
-              Remove key
-            </Button>
-          )}
-        </div>
-        <p className="mt-2 text-xs text-muted">Your key is stored only in this browser (localStorage) and is sent only to openrouter.ai. It is never included in progress exports.</p>
+            <label className="mt-4 block text-sm font-semibold" htmlFor="api-key">
+              API key
+            </label>
+            <div className="mt-1 flex gap-2">
+              <input
+                id="api-key"
+                type={showKey ? 'text' : 'password'}
+                value={keyInput}
+                onChange={(e) => setKeyInput(e.target.value)}
+                placeholder="sk-or-v1-…"
+                autoComplete="off"
+                className="min-w-0 flex-1 rounded-lg border border-line bg-panel-2 px-3 py-2 font-mono text-sm outline-none focus:border-accent"
+              />
+              <Button variant="ghost" onClick={() => setShowKey((s) => !s)}>
+                {showKey ? 'Hide' : 'Show'}
+              </Button>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button variant="primary" onClick={saveKey} disabled={keyInput.trim() === settings.apiKey}>
+                Save key
+              </Button>
+              <Button onClick={runTest} disabled={!keyInput.trim() && !shared}>
+                {keyInput.trim() || !shared ? 'Test' : 'Test shared coach'}
+              </Button>
+              {settings.apiKey && (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setKeyInput('')
+                    updateSettings({ apiKey: '' })
+                    setTest(null)
+                  }}
+                >
+                  Remove key
+                </Button>
+              )}
+            </div>
+            <p className="mt-2 text-xs text-muted">Your key is stored only in this browser (localStorage) and is sent only to openrouter.ai. It is never included in progress exports.</p>
+          </>
+        )}
         {test && (
           <div className="mt-3">
             <Notice kind={test.kind}>{test.text}</Notice>
@@ -183,6 +199,16 @@ export default function Settings() {
             <Notice kind="warn">{modelError}</Notice>
           </div>
         )}
+
+        <p className="mt-5 text-sm font-semibold">Coach thinking</p>
+        <div className="mt-1 grid grid-cols-3 gap-2">
+          {EFFORTS.map((e) => (
+            <Button key={e.id} variant={settings.coachEffort === e.id ? 'primary' : 'secondary'} onClick={() => updateSettings({ coachEffort: e.id })}>
+              {e.label}
+            </Button>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-muted">{EFFORTS.find((e) => e.id === settings.coachEffort)?.hint}</p>
       </Card>
 
       <Card>

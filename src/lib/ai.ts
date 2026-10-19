@@ -48,6 +48,11 @@ export function sharedCoachAvailable(): Promise<boolean> {
     .then((res) => (res.ok ? res.json() : { configured: false }))
     .then((json: { configured?: boolean }) => json.configured === true)
     .catch(() => false)
+    .then((ok) => {
+      // Only remember a positive answer: a failed check (e.g. the app was opened offline) is retried next time.
+      if (!ok) proxyCheck = null
+      return ok
+    })
   return proxyCheck
 }
 
@@ -109,7 +114,7 @@ export async function streamChat(
   onToken: (text: string) => void,
   signal?: AbortSignal,
 ): Promise<{ model: string }> {
-  const { apiKey, model } = getSettings()
+  const { apiKey, model, coachEffort } = getSettings()
   const viaProxy = !apiKey && (await sharedCoachAvailable())
   if (!apiKey && !viaProxy) throw new AiError('Add your free OpenRouter API key in Settings to use the AI coach.')
 
@@ -136,7 +141,7 @@ export async function streamChat(
             'HTTP-Referer': window.location.origin,
             'X-Title': 'Chess Master',
           },
-      body: JSON.stringify({ model: candidate, messages, stream: true, temperature: 0.4 }),
+      body: JSON.stringify({ model: candidate, messages, stream: true, temperature: 0.4, reasoning: { effort: coachEffort } }),
     })
     if (res.status === 401) {
       throw new AiError(viaProxy ? "The site's shared AI key was rejected by OpenRouter. Add your own free key in Settings." : 'OpenRouter rejected the API key. Check it in Settings.')

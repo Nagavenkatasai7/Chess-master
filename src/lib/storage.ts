@@ -41,9 +41,13 @@ export interface Progress {
   activeDays: string[]
 }
 
+export type CoachEffort = 'minimal' | 'low' | 'medium'
+
 export interface Settings {
   apiKey: string
   model: string
+  /** How long reasoning models think before answering (OpenRouter reasoning effort). */
+  coachEffort: CoachEffort
   boardTheme: 'green' | 'brown' | 'blue' | 'purple'
   showCoordinates: boolean
   playerName: string
@@ -75,6 +79,7 @@ function freshProgress(): Progress {
 const defaultSettings: Settings = {
   apiKey: '',
   model: DEFAULT_MODEL,
+  coachEffort: 'low',
   boardTheme: 'green',
   showCoordinates: true,
   playerName: '',

@@ -71,13 +71,17 @@ export default function CoachPanel({
     return (
       <div className="rounded-xl border border-line bg-panel-2/60 p-4 text-sm">
         <p className="font-semibold">🤖 AI Coach</p>
-        <p className="mt-1 text-muted">
-          Get plain-English explanations of any position from a free AI model. Add your free OpenRouter API key in{' '}
-          <Link to="/settings" className="text-accent underline">
-            Settings
-          </Link>{' '}
-          to turn it on.
-        </p>
+        {navigator.onLine ? (
+          <p className="mt-1 text-muted">
+            Get plain-English explanations of any position from a free AI model. Add your free OpenRouter API key in{' '}
+            <Link to="/settings" className="text-accent underline">
+              Settings
+            </Link>{' '}
+            to turn it on.
+          </p>
+        ) : (
+          <p className="mt-1 text-muted">The AI coach needs an internet connection. Everything else works offline.</p>
+        )}
       </div>
     )
   }

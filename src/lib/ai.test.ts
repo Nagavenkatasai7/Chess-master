@@ -64,7 +64,9 @@ describe('shared coach proxy', () => {
       vi.fn(async (url: string, init?: RequestInit) => {
         if (url === '/api/chat' && !init) return new Response(JSON.stringify({ configured: true }))
         if (url.endsWith('/models')) return new Response(JSON.stringify(MODELS))
-        requests.push({ url, auth: (init?.headers as Record<string, string> | undefined)?.Authorization, model: JSON.parse(String(init?.body)).model })
+        const body = JSON.parse(String(init?.body))
+        expect(body.reasoning).toEqual({ effort: 'low' })
+        requests.push({ url, auth: (init?.headers as Record<string, string> | undefined)?.Authorization, model: body.model })
         return sse(['Castle ', 'early.'])
       }),
     )
