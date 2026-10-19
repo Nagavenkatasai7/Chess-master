@@ -2,11 +2,11 @@
 // together with the position and a fresh Stockfish analysis.
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AiError, COACH_SYSTEM_PROMPT, streamChat, type ChatMessage } from '../lib/ai'
+import { AiError, COACH_SYSTEM_PROMPT, streamChat, useCoachAvailable, type ChatMessage } from '../lib/ai'
 import { buildCoachPrompt, type CoachContext } from '../lib/coach'
 import { Markdown } from '../lib/markdown'
 import { estimateRating } from '../lib/rating'
-import { getProgress, useSettings } from '../lib/storage'
+import { getProgress } from '../lib/storage'
 import { Button } from './ui'
 
 interface Turn {
@@ -25,7 +25,7 @@ export default function CoachPanel({
   suggestions?: string[]
   compact?: boolean
 }) {
-  const settings = useSettings()
+  const { available } = useCoachAvailable()
   const [turns, setTurns] = useState<Turn[]>([])
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
@@ -67,7 +67,7 @@ export default function CoachPanel({
     }
   }
 
-  if (!settings.apiKey) {
+  if (!available) {
     return (
       <div className="rounded-xl border border-line bg-panel-2/60 p-4 text-sm">
         <p className="font-semibold">🤖 AI Coach</p>

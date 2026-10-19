@@ -33,11 +33,18 @@ Other scripts:
 
 ## Turning on the AI coach
 
-1. Create a free account at [openrouter.ai](https://openrouter.ai) and create an API key under **Settings → API Keys**. Free models need no credits.
-2. In the app, open **Settings**, paste the key and press **Test**.
-3. Pick a model. The default is `nvidia/nemotron-3-ultra-550b-a55b:free` (NVIDIA Nemotron 3 Ultra, strong at multi-step reasoning). The dropdown lists OpenRouter's **live** free models. If the chosen model is rate limited or unavailable, the coach automatically tries the next free one.
+There are two ways to power the coach. Both use **free** OpenRouter models.
 
-The key is stored only in your browser and sent only to `openrouter.ai`. Free models have daily request limits.
+**Shared key on the deployed site (recommended for hosting).** Set the `OPENROUTER_API_KEY` environment variable in Vercel; mark it *Sensitive*. The `api/chat.js` function forwards coach requests to OpenRouter with that key, so the key never reaches the browser. To keep a public site safe, the proxy:
+- only allows free models (ids ending in `:free`);
+- only accepts requests from the site's own pages;
+- caps the size of each conversation.
+
+`GET /api/chat?check=1&model=<id>` reports whether the key is valid and the model is available.
+
+**Personal key in the browser.** Anyone can paste their own key under **Settings**. It is stored only in that browser and sent only to `openrouter.ai`. A personal key takes priority over the shared one. To get one, create a free account at [openrouter.ai](https://openrouter.ai), then create a key under **Settings → API Keys**. Free models need no credits.
+
+The default model is `minimax/minimax-m3.1-flash:free`. The Settings dropdown lists OpenRouter's **live** free models. If a model is rate limited or unavailable, the coach automatically falls back to the next one: `minimax/minimax-m3:free`, then `nvidia/nemotron-3-ultra-550b-a55b:free`, and so on. Free models have daily request limits.
 
 ## How the content is kept correct
 
@@ -60,7 +67,7 @@ scripts/         engine copy, content checks, puzzle generator
 
 ## Deploying
 
-The build is a static site with relative paths, so any static host works (Vercel, Netlify, GitHub Pages). On Vercel the defaults are fine: `npm install` runs the engine copy step, then `npm run build` outputs `dist/`.
+On Vercel (`vercel.json` is included), `npm install` runs the engine copy step, `npm run build` outputs `dist/`, and `api/chat.js` becomes the coach proxy function. Add `OPENROUTER_API_KEY` to enable the shared coach. Without Vercel, the static `dist/` folder runs on any host; the coach then needs a personal key in Settings.
 
 ## Licences
 

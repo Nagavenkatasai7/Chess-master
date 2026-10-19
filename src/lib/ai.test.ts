@@ -51,3 +51,27 @@ describe('OpenRouter client', () => {
     await expect(streamChat([{ role: 'user', content: 'hi' }], () => {})).rejects.toThrow(/API key/)
   })
 })
+
+describe('shared coach proxy', () => {
+  it('uses /api/chat without exposing a key when the site provides one', async () => {
+    vi.resetModules()
+    const ai = await import('./ai')
+    const storage = await import('./storage')
+    storage.updateSettings({ apiKey: '', model: storage.DEFAULT_MODEL })
+    const requests: { url: string; auth?: string; model?: string }[] = []
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string, init?: RequestInit) => {
+        if (url === '/api/chat' && !init) return new Response(JSON.stringify({ configured: true }))
+        if (url.endsWith('/models')) return new Response(JSON.stringify(MODELS))
+        requests.push({ url, auth: (init?.headers as Record<string, string>).Authorization, model: JSON.parse(String(init?.body)).model })
+        return sse(['Castle ', 'early.'])
+      }),
+    )
+    let text = ''
+    const { model } = await ai.streamChat([{ role: 'user', content: 'tip?' }], (t) => (text += t))
+    expect(text).toBe('Castle early.')
+    expect(model).toBe(storage.DEFAULT_MODEL)
+    expect(requests).toEqual([{ url: '/api/chat', auth: undefined, model: storage.DEFAULT_MODEL }])
+  })
+})

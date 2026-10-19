@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button, Card, Notice, PageHeader } from '../components/ui'
-import { AiError, listFreeModels, PREFERRED_FREE_MODELS, streamChat, type ModelInfo } from '../lib/ai'
+import { AiError, listFreeModels, PREFERRED_FREE_MODELS, streamChat, useCoachAvailable, type ModelInfo } from '../lib/ai'
 import { DEFAULT_MODEL, exportProgress, importProgress, resetProgress, updateSettings, useSettings, type Settings as SettingsType } from '../lib/storage'
 
 const THEMES: { id: SettingsType['boardTheme']; label: string; light: string; dark: string }[] = [
@@ -12,6 +12,7 @@ const THEMES: { id: SettingsType['boardTheme']; label: string; light: string; da
 
 export default function Settings() {
   const settings = useSettings()
+  const { shared } = useCoachAvailable()
   const [keyInput, setKeyInput] = useState(settings.apiKey)
   const [showKey, setShowKey] = useState(false)
   const [models, setModels] = useState<ModelInfo[] | null>(null)
@@ -34,6 +35,7 @@ export default function Settings() {
     setTest({ kind: 'good', text: 'API key saved in this browser.' })
   }
 
+  // Tests the key in the box, or the site's shared coach when the box is empty.
   const runTest = async () => {
     updateSettings({ apiKey: keyInput.trim() })
     setTest({ kind: 'info', text: 'Asking the coach a test question…' })
@@ -78,6 +80,14 @@ export default function Settings() {
           The coach explains positions in plain English using a <strong className="text-ink">free</strong> AI model on OpenRouter. Stockfish's analysis is sent along with
           every question, so the explanations are grounded in accurate chess.
         </p>
+        {shared && (
+          <div className="mt-3">
+            <Notice kind="good">
+              ✅ This site has a shared AI coach key, so the coach already works without your own key. Add a personal key below only if you want your own daily
+              request quota.
+            </Notice>
+          </div>
+        )}
         <ol className="mt-3 list-decimal space-y-1 pl-5 text-sm text-muted">
           <li>
             Create a free account at{' '}
@@ -117,8 +127,8 @@ export default function Settings() {
           <Button variant="primary" onClick={saveKey} disabled={keyInput.trim() === settings.apiKey}>
             Save key
           </Button>
-          <Button onClick={runTest} disabled={!keyInput.trim()}>
-            Test
+          <Button onClick={runTest} disabled={!keyInput.trim() && !shared}>
+            {keyInput.trim() || !shared ? 'Test' : 'Test shared coach'}
           </Button>
           {settings.apiKey && (
             <Button
@@ -164,8 +174,8 @@ export default function Settings() {
         </div>
         <p className="mt-2 text-xs text-muted">
           {models ? `${models.length} free models available right now. ` : 'Loading the live list of free models… '}
-          Recommended: <span className="font-mono">{DEFAULT_MODEL}</span> (NVIDIA Nemotron 3 Ultra, strong multi-step reasoning). If a free model is busy or rate-limited the coach
-          automatically tries the next one. Free models have daily request limits.
+          Recommended: <span className="font-mono">{DEFAULT_MODEL}</span> (MiniMax). If a free model is busy, rate-limited or unavailable, the coach automatically
+          tries the next one (MiniMax M3, then NVIDIA Nemotron 3 Ultra). Free models have daily request limits.
         </p>
         {modelError && (
           <div className="mt-2">

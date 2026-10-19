@@ -1038,7 +1038,7 @@ const checkModule: Module = {
             goal: 'mate',
             solution: ['Qg7#'],
             hint: 'Your king on g6 protects the squares g7 and h7. Put the queen right next to the black king there.',
-            explanation: 'Qg7# (Qh7# works too, and so does Qb8#). The queen gives check, and the black king cannot take her because your king protects her.',
+            explanation: 'Qg7# (Qh7# works too). The queen gives check, and the black king cannot take her because your king protects her. The queen can also mate from the 8th rank, for example Qb8#, because your king covers g7 and h7.',
           },
         },
         {
@@ -1170,7 +1170,7 @@ const checkModule: Module = {
             goal: 'mate',
             solution: ['Qc8#'],
             hint: 'Qc7 takes away every square but gives no check: stalemate. Give check along the 8th rank instead.',
-            explanation: 'Qc8# (or Qf8#, Qg8#, Qa7#). The queen checks the king and your king covers a7 and b7. Qc7?? would cover all the squares without giving check: stalemate.',
+            explanation: 'Qc8# (Qf8# works too). The queen checks along the 8th rank and your king covers a7 and b7. Qc7?? would cover all the squares without giving check: stalemate.',
           },
         },
         {
@@ -1441,11 +1441,11 @@ const specialModule: Module = {
         },
         {
           type: 'line',
-          fen: '6k1/6p1/8/8/4Q3/8/rr4PP/6K1 w - - 0 1',
+          fen: '6k1/6p1/8/pp6/4Q3/8/rr4PP/6K1 w - - 0 1',
           moves: ['Qe8+', 'Kh7', 'Qh5+', 'Kg8', 'Qe8+', 'Kh7', 'Qh5+', 'Kg8', 'Qe8+'],
           caption: 'Perpetual check: White is losing, but saves the game by checking forever.',
           notes: {
-            1: 'Black has two rooks against a queen and threatens to crash through on g2. White starts checking.',
+            1: 'Black is two pawns up, and the rooks threaten to crash through on g2. White has only one way to survive: start checking.',
             2: 'The only move: f8, f7 and h8 are all covered by the queen.',
             3: 'Check again along the h-file.',
             4: 'Again the only move.',

@@ -1,9 +1,13 @@
-// AI coach via OpenRouter. The learner's API key stays in their browser and is
-// sent only to openrouter.ai. Stockfish analysis is passed in as ground truth,
+// AI coach via OpenRouter. Requests go either straight to openrouter.ai with
+// the learner's own key (kept in their browser), or through this site's
+// /api/chat proxy, which holds the site owner's key server-side and only
+// allows free models. Stockfish analysis is passed in as ground truth,
 // because language models cannot calculate chess reliably on their own.
-import { DEFAULT_MODEL, getSettings } from './storage'
+import { useEffect, useState } from 'react'
+import { DEFAULT_MODEL, getSettings, useSettings } from './storage'
 
 const API = 'https://openrouter.ai/api/v1'
+const PROXY = '/api/chat'
 
 export interface ModelInfo {
   id: string
@@ -19,6 +23,8 @@ export interface ModelInfo {
  */
 export const PREFERRED_FREE_MODELS = [
   DEFAULT_MODEL,
+  'minimax/minimax-m3:free',
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
   'nvidia/nemotron-3-super-120b-a12b:free',
   'openai/gpt-oss-120b:free',
   'google/gemma-4-31b-it:free',
@@ -34,6 +40,30 @@ export const PREFERRED_FREE_MODELS = [
 const EXCLUDED_PREFIXES = ['thinkingmachines/inkling', 'openrouter/']
 
 let modelCache: ModelInfo[] | null = null
+let proxyCheck: Promise<boolean> | null = null
+
+/** Whether this site has a shared key configured (the /api/chat proxy). */
+export function sharedCoachAvailable(): Promise<boolean> {
+  proxyCheck ??= fetch(PROXY)
+    .then((res) => (res.ok ? res.json() : { configured: false }))
+    .then((json: { configured?: boolean }) => json.configured === true)
+    .catch(() => false)
+  return proxyCheck
+}
+
+/** True when the coach can answer: the learner has a key, or the site provides one. */
+export function useCoachAvailable(): { available: boolean; shared: boolean; ownKey: boolean } {
+  const ownKey = Boolean(useSettings().apiKey)
+  const [shared, setShared] = useState(false)
+  useEffect(() => {
+    let live = true
+    sharedCoachAvailable().then((ok) => live && setShared(ok))
+    return () => {
+      live = false
+    }
+  }, [])
+  return { available: ownKey || shared, shared, ownKey }
+}
 
 export async function listFreeModels(force = false): Promise<ModelInfo[]> {
   if (modelCache && !force) return modelCache
@@ -80,7 +110,8 @@ export async function streamChat(
   signal?: AbortSignal,
 ): Promise<{ model: string }> {
   const { apiKey, model } = getSettings()
-  if (!apiKey) throw new AiError('Add your free OpenRouter API key in Settings to use the AI coach.')
+  const viaProxy = !apiKey && (await sharedCoachAvailable())
+  if (!apiKey && !viaProxy) throw new AiError('Add your free OpenRouter API key in Settings to use the AI coach.')
 
   let candidates = [model || DEFAULT_MODEL]
   try {
@@ -91,19 +122,25 @@ export async function streamChat(
   }
 
   let lastError = ''
+  // The shared proxy only serves free models.
+  if (viaProxy) candidates = candidates.filter((id) => id.endsWith(':free'))
   for (const candidate of candidates) {
-    const res = await fetch(`${API}/chat/completions`, {
+    const res = await fetch(viaProxy ? PROXY : `${API}/chat/completions`, {
       method: 'POST',
       signal,
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'Chess Master',
-      },
+      headers: viaProxy
+        ? { 'Content-Type': 'application/json' }
+        : {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': window.location.origin,
+            'X-Title': 'Chess Master',
+          },
       body: JSON.stringify({ model: candidate, messages, stream: true, temperature: 0.4 }),
     })
-    if (res.status === 401) throw new AiError('OpenRouter rejected the API key. Check it in Settings.')
+    if (res.status === 401) {
+      throw new AiError(viaProxy ? "The site's shared AI key was rejected by OpenRouter. Add your own free key in Settings." : 'OpenRouter rejected the API key. Check it in Settings.')
+    }
     if (!res.ok || !res.body) {
       lastError = `${candidate}: HTTP ${res.status} ${(await res.text().catch(() => '')).slice(0, 200)}`
       if ([402, 404, 408, 429, 500, 502, 503].includes(res.status)) continue

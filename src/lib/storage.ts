@@ -52,7 +52,7 @@ export interface Settings {
 const PROGRESS_KEY = 'chessmaster.progress.v1'
 const SETTINGS_KEY = 'chessmaster.settings.v1'
 
-export const DEFAULT_MODEL = 'nvidia/nemotron-3-ultra-550b-a55b:free'
+export const DEFAULT_MODEL = 'minimax/minimax-m3.1-flash:free'
 
 export function today(): string {
   const d = new Date()
