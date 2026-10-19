@@ -8,7 +8,7 @@
 //
 //   GET  /api/chat          -> { configured }            (is a shared key set?)
 //   GET  /api/chat?check=1  -> also verifies the key and the default model
-//   GET  /api/chat?probe=<COACH_PROBE_TOKEN>&model=<id>
+//   GET  /api/chat?probe=<COACH_PROBE_TOKEN>&model=<id>[&effort=low]
 //                           -> owner-only end-to-end test: asks the model one chess question
 //   POST /api/chat          -> streams an OpenRouter chat completion
 
@@ -17,6 +17,8 @@ const MAX_MESSAGES = 16
 const MAX_CHARS = 60000
 const ROLES = new Set(['system', 'user', 'assistant'])
 const MODEL_ID = /^[\w.\-/]+:free$/
+// OpenRouter's unified reasoning control; models without reasoning ignore it.
+const EFFORTS = new Set(['minimal', 'low', 'medium', 'high'])
 
 function json(status, body) {
   return new Response(JSON.stringify(body), {
@@ -71,6 +73,7 @@ async function probe(url, key) {
   if (!key) return json(503, { error: { message: 'OPENROUTER_API_KEY is not set.' } })
   const model = url.searchParams.get('model') ?? ''
   if (!MODEL_ID.test(model)) return json(400, { error: { message: 'Only free models can be probed.' } })
+  const effort = url.searchParams.get('effort')
   const started = Date.now()
   const res = await fetch(`${OPENROUTER}/chat/completions`, {
     method: 'POST',
@@ -85,11 +88,13 @@ async function probe(url, key) {
             'Position after 1. e4 e5 2. Bc4 Nc6 3. Qh5 Nf6?? (FEN r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4). Stockfish: 4. Qxf7# is checkmate. In two sentences, explain to a beginner why Black\'s last move was a blunder.',
         },
       ],
+      ...(EFFORTS.has(effort) ? { reasoning: { effort } } : {}),
     }),
   })
   const body = await res.json().catch(() => ({}))
   return json(200, {
     model,
+    effort: EFFORTS.has(effort) ? effort : 'default',
     status: res.status,
     seconds: (Date.now() - started) / 1000,
     servedBy: body.provider ?? null,
@@ -110,7 +115,7 @@ export async function POST(request) {
   } catch {
     return json(400, { error: { message: 'Invalid JSON.' } })
   }
-  const { model, messages, temperature } = body ?? {}
+  const { model, messages, temperature, reasoning } = body ?? {}
   if (typeof model !== 'string' || !MODEL_ID.test(model)) {
     return json(400, { error: { message: 'Only free OpenRouter models (ids ending in ":free") can be used through the shared coach.' } })
   }
@@ -137,6 +142,7 @@ export async function POST(request) {
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
       stream: true,
       temperature: typeof temperature === 'number' ? Math.min(1, Math.max(0, temperature)) : 0.4,
+      ...(EFFORTS.has(reasoning?.effort) ? { reasoning: { effort: reasoning.effort } } : {}),
     }),
   })
 
