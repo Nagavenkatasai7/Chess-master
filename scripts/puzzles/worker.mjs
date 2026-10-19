@@ -37,14 +37,16 @@ const VALUES = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 }
 // Game profiles: who is playing. Skill = Stockfish "Skill Level" (0-20).
 // scanNodes: per-position scan budget (weak games have shallow tactics: scan cheaper)
 const PROFILES = [
-  { name: 'novice', weight: 28, skill: [0, 2], bookProb: 0.45, bookMax: 6, randomPlies: [0, 2], lapse: 0, scanNodes: 16000, branches: 3 },
-  { name: 'casual', weight: 26, skill: [3, 7], bookProb: 0.75, bookMax: 10, randomPlies: [0, 4], lapse: 0.04, lapseSkill: [0, 2], scanNodes: 22000, branches: 3 },
-  { name: 'club', weight: 26, skill: [9, 16], bookProb: 0.85, bookMax: 14, randomPlies: [1, 4], lapse: 0.12, lapseSkill: [0, 5], scanNodes: 30000, branches: 2 },
+  { name: 'novice', weight: 24, skill: [0, 2], bookProb: 0.45, bookMax: 6, randomPlies: [0, 2], lapse: 0, scanNodes: 16000, branches: 3 },
+  { name: 'casual', weight: 14, skill: [3, 7], bookProb: 0.75, bookMax: 10, randomPlies: [0, 4], lapse: 0.04, lapseSkill: [0, 2], scanNodes: 22000, branches: 3 },
+  { name: 'club', weight: 4, skill: [9, 16], bookProb: 0.85, bookMax: 14, randomPlies: [1, 4], lapse: 0.12, lapseSkill: [0, 5], scanNodes: 30000, branches: 2 },
   // probe: strong, balanced main game; at most positions try a plausible blunder as a side line
-  { name: 'probe', weight: 30, skill: [15, 20], bookProb: 0.9, bookMax: 14, randomPlies: [1, 5], lapse: 0, probe: 0.7, branches: 0, noScan: true },
+  { name: 'probe', weight: 34, skill: [15, 20], bookProb: 0.9, bookMax: 14, randomPlies: [1, 5], probe: 0.7, branches: 0, noScan: true },
+  // endprobe: the same, but probing only once the game has reached an endgame
+  { name: 'endprobe', weight: 14, skill: [16, 20], bookProb: 0.9, bookMax: 14, randomPlies: [1, 5], probe: 0.8, probeNpm: 30, branches: 0, noScan: true },
   {
     name: 'endgame',
-    weight: 20,
+    weight: 10,
     skill: [16, 20],
     bookProb: 0.85,
     bookMax: 14,
@@ -268,6 +270,7 @@ export class Miner {
 
       // --- probe a plausible blunder (side line; the game itself continues normally)
       if (profile.probe && ply >= Math.max(bookLen, 8) && found < CFG.maxPuzzlesPerGame + 3 && rng() < profile.probe &&
+        (!profile.probeNpm || nonPawnMaterial(chess) <= profile.probeNpm) &&
         !recentFirst.some((r) => ply - r.ply < 3)) {
         const t2 = Date.now()
         const puzzle = await this.probe(chess, rng, { ...game, ply, branch: 0 }, recentFirst)

@@ -350,6 +350,23 @@ function pinPreventsAttack(p) {
   return false
 }
 
+/** A solver move attacks an absolutely pinned piece with a cheaper piece (or the pinned piece is undefended). */
+function pinnedPieceAttacked(p) {
+  for (const node of solverNodes(p)) {
+    const board = node.after
+    const mover = board.get(node.move.to)
+    if (mover.type === 'k') continue
+    for (const [piece, square] of attackedOpponentSquares(board, node.move.to, p.pov)) {
+      if (piece.type === 'k' || piece.type === 'p') continue
+      if (!pinRay(board, piece.color, square)) continue
+      if (VALUES[piece.type] > VALUES[mover.type] || isHanging(board, square)) {
+        if (!board.attackers(node.move.to, other(p.pov)).includes(square)) return true
+      }
+    }
+  }
+  return false
+}
+
 function pseudoTargetsOffRay(board, square, ray) {
   const piece = board.get(square)
   if (piece.type === 'p') {
@@ -524,7 +541,7 @@ export function tagPuzzle(fen, moves, cp) {
   if (trappedPiece(p)) tags.push('trappedPiece')
   if (discoveredAttack(p)) tags.push('discoveredAttack')
   if (skewer(p)) tags.push('skewer')
-  if (pinPreventsAttack(p) || pinPreventsEscape(p)) tags.push('pin')
+  if (pinPreventsAttack(p) || pinPreventsEscape(p) || pinnedPieceAttacked(p)) tags.push('pin')
   if (promotion(p)) tags.push('promotion')
   if (sideAttack(p, 7, [6, 7], 2)) tags.push('kingsideAttack')
   else if (sideAttack(p, 0, [0, 1, 2], 2)) tags.push('queensideAttack')

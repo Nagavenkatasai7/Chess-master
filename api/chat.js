@@ -8,6 +8,8 @@
 //
 //   GET  /api/chat          -> { configured }            (is a shared key set?)
 //   GET  /api/chat?check=1  -> also verifies the key and the default model
+//   GET  /api/chat?probe=<COACH_PROBE_TOKEN>&model=<id>
+//                           -> owner-only end-to-end test: asks the model one chess question
 //   POST /api/chat          -> streams an OpenRouter chat completion
 
 const OPENROUTER = 'https://openrouter.ai/api/v1'
@@ -37,6 +39,7 @@ function sameOrigin(request) {
 export async function GET(request) {
   const key = process.env.OPENROUTER_API_KEY
   const url = new URL(request.url, 'http://localhost')
+  if (url.searchParams.has('probe')) return probe(url, key)
   if (!url.searchParams.has('check')) return json(200, { configured: Boolean(key) })
 
   const model = url.searchParams.get('model') ?? ''
@@ -53,6 +56,47 @@ export async function GET(request) {
     }
   }
   return json(200, result)
+}
+
+function sameSecret(a, b) {
+  if (!a || !b || a.length !== b.length) return false
+  let diff = 0
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  return diff === 0
+}
+
+/** One real, non-streaming completion so the owner can verify a model end to end. */
+async function probe(url, key) {
+  if (!sameSecret(url.searchParams.get('probe') ?? '', process.env.COACH_PROBE_TOKEN ?? '')) return json(404, { error: { message: 'Not found.' } })
+  if (!key) return json(503, { error: { message: 'OPENROUTER_API_KEY is not set.' } })
+  const model = url.searchParams.get('model') ?? ''
+  if (!MODEL_ID.test(model)) return json(400, { error: { message: 'Only free models can be probed.' } })
+  const started = Date.now()
+  const res = await fetch(`${OPENROUTER}/chat/completions`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'X-Title': 'Chess Master' },
+    body: JSON.stringify({
+      model,
+      messages: [
+        { role: 'system', content: 'You are a concise chess coach. Use the engine analysis as ground truth.' },
+        {
+          role: 'user',
+          content:
+            'Position after 1. e4 e5 2. Bc4 Nc6 3. Qh5 Nf6?? (FEN r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4). Stockfish: 4. Qxf7# is checkmate. In two sentences, explain to a beginner why Black\'s last move was a blunder.',
+        },
+      ],
+    }),
+  })
+  const body = await res.json().catch(() => ({}))
+  return json(200, {
+    model,
+    status: res.status,
+    seconds: (Date.now() - started) / 1000,
+    servedBy: body.provider ?? null,
+    answer: body.choices?.[0]?.message?.content ?? null,
+    usage: body.usage ?? null,
+    error: body.error?.message ?? null,
+  })
 }
 
 export async function POST(request) {

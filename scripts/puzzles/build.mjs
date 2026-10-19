@@ -82,11 +82,35 @@ function cpOf(score) {
   return score.cp
 }
 
+/**
+ * Drop a trailing solver move that is merely forced (the only legal move, or a king
+ * stepping out of check with at most one alternative): the tactic is already over.
+ * Mate lines are never trimmed.
+ */
+export function trimForcedEnd(rec) {
+  if (rec.kind === 'mate') return rec
+  let { moves, steps } = rec
+  while (steps.length >= 2) {
+    const last = steps[steps.length - 1]
+    const c = new Chess(rec.fen)
+    for (const u of moves.slice(0, -1)) c.move({ from: u.slice(0, 2), to: u.slice(2, 4), promotion: u[4] })
+    const lastMove = moves[moves.length - 1]
+    const kingMove = c.get(lastMove.slice(0, 2))?.type === 'k'
+    const forced = !last.second || last.legal <= 1 || (c.isCheck() && last.legal <= 2) || (c.isCheck() && kingMove && last.legal <= 3)
+    if (!forced) break
+    moves = moves.slice(0, -2)
+    steps = steps.slice(0, -1)
+  }
+  return moves === rec.moves ? rec : { ...rec, moves, steps, trimmed: true }
+}
+
 export function processCandidates(raw) {
   const items = []
   const dropped = {}
   const drop = (why) => (dropped[why] = (dropped[why] ?? 0) + 1)
-  for (const rec of raw) {
+  for (const original of raw) {
+    const rec = trimForcedEnd(original)
+    if (rec !== original) drop('trimmed-forced-end(kept)')
     const info = inspect(rec.fen, rec.moves)
     if (info.error) {
       drop(info.error.split(' ')[0])
