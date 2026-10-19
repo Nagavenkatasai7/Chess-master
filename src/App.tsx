@@ -1,122 +1,109 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { lazy, Suspense, useEffect } from 'react'
+import { HashRouter, NavLink, Route, Routes, useLocation } from 'react-router-dom'
+import Home from './pages/Home'
 
-function App() {
-  const [count, setCount] = useState(0)
+const Learn = lazy(() => import('./pages/Learn'))
+const LessonPage = lazy(() => import('./pages/LessonPage'))
+const Puzzles = lazy(() => import('./pages/Puzzles'))
+const Play = lazy(() => import('./pages/Play'))
+const Openings = lazy(() => import('./pages/Openings'))
+const OpeningPage = lazy(() => import('./pages/OpeningPage'))
+const Handbook = lazy(() => import('./pages/Handbook'))
+const Analysis = lazy(() => import('./pages/Analysis'))
+const SettingsPage = lazy(() => import('./pages/Settings'))
 
+const NAV = [
+  { to: '/', label: 'Home', icon: '🏠' },
+  { to: '/learn', label: 'Learn', icon: '🎓' },
+  { to: '/puzzles', label: 'Puzzles', icon: '🧩' },
+  { to: '/play', label: 'Play', icon: '♟️' },
+  { to: '/openings', label: 'Openings', icon: '📖' },
+  { to: '/handbook', label: 'Tips & Traps', icon: '💡' },
+  { to: '/analysis', label: 'Analysis', icon: '🔍' },
+  { to: '/settings', label: 'Settings', icon: '⚙️' },
+]
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => window.scrollTo(0, 0), [pathname])
+  return null
+}
+
+function Shell() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen md:pl-56">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 flex-col border-r border-line bg-panel md:flex">
+        <NavLink to="/" className="flex items-center gap-2 px-5 py-5">
+          <span className="text-2xl">♛</span>
+          <span className="text-lg font-bold tracking-tight">
+            Chess <span className="text-accent">Master</span>
+          </span>
+        </NavLink>
+        <nav className="flex flex-col gap-0.5 px-3">
+          {NAV.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === '/'}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition ${isActive ? 'bg-accent/15 font-semibold text-accent' : 'text-muted hover:bg-panel-2 hover:text-ink'}`
+              }
+            >
+              <span className="w-5 text-center">{item.icon}</span>
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+        <p className="mt-auto px-5 py-4 text-xs text-muted">From your first move to grandmaster.</p>
+      </aside>
 
-      <div className="ticks"></div>
+      <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-line bg-panel/95 px-4 py-3 backdrop-blur md:hidden">
+        <span className="text-xl">♛</span>
+        <span className="font-bold">
+          Chess <span className="text-accent">Master</span>
+        </span>
+      </header>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      <main className="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:px-6 md:pb-10">
+        <Suspense fallback={<p className="text-muted">Loading…</p>}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/learn" element={<Learn />} />
+            <Route path="/learn/:lessonId" element={<LessonPage />} />
+            <Route path="/puzzles" element={<Puzzles />} />
+            <Route path="/play" element={<Play />} />
+            <Route path="/openings" element={<Openings />} />
+            <Route path="/openings/:openingId" element={<OpeningPage />} />
+            <Route path="/handbook" element={<Handbook />} />
+            <Route path="/analysis" element={<Analysis />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="*" element={<Home />} />
+          </Routes>
+        </Suspense>
+      </main>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-line bg-panel/95 py-1.5 backdrop-blur md:hidden">
+        {NAV.filter((n) => ['/', '/learn', '/puzzles', '/play', '/openings', '/settings'].includes(n.to)).map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.to === '/'}
+            className={({ isActive }) => `flex flex-col items-center px-2 py-1 text-[11px] ${isActive ? 'text-accent' : 'text-muted'}`}
+          >
+            <span className="text-lg leading-none">{item.icon}</span>
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+    </div>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <HashRouter>
+      <ScrollToTop />
+      <Shell />
+    </HashRouter>
+  )
+}
