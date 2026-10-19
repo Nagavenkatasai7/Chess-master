@@ -330,10 +330,10 @@ export class Miner {
    */
   async probe(chess, rng, game, recentFirst) {
     const fen = chess.fen()
-    const shallow = await this.engine.search(fen, { depth: 4, multipv: 8 })
+    const shallow = await this.engine.search(fen, { depth: 3, multipv: 10 })
     const top = shallow.lines[0]
     if (!top) return null
-    const plausible = shallow.lines.filter((l) => scoreValue(l.score) >= scoreValue(top.score) - 80).map((l) => l.move)
+    const plausible = shallow.lines.filter((l) => scoreValue(l.score) >= scoreValue(top.score) - 200).map((l) => l.move)
     if (plausible.length < 2) return null
     const deep = await this.engine.search(fen, { depth: 10, multipv: plausible.length, searchmoves: plausible })
     const best = deep.lines[0]
