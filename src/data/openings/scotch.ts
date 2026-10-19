@@ -1,0 +1,78 @@
+import type { Opening } from '../types.ts'
+
+export const scotchGame: Opening = {
+  id: 'scotch-game',
+  name: 'Scotch Game',
+  eco: 'C45',
+  side: 'white',
+  difficulty: 'beginner',
+  summary:
+    'The Scotch opens the centre on move three, avoiding the long theoretical battles of the Ruy Lopez. White gets free piece play, extra space thanks to the e4 pawn and clear plans. Kasparov revived it at the top level, and it is ideal for players who want straightforward, active positions.',
+  ideas: [
+    'Open the centre at once with d4 to get free development and a space advantage.',
+    'After 4…Nf6, Nxc6 and e5 kick the knight and gain space.',
+    'Against 4…Bc5, Nxc6 followed by Qd2 or Qf3 neutralises Black’s pressure on f2.',
+    'Your e4 pawn against Black’s missing e-pawn gives you a lasting central edge.',
+    'After Nxc6, Black’s queenside pawns are often doubled or isolated, which can tell in the endgame.',
+    'Develop quickly and castle, because the position opens early.',
+  ],
+  pitfalls: [
+    'After 4…Bc5, watch f2: …Qf6 creates threats against it straight away.',
+    'Do not push e5 without support; the pawn can become a target for …d6 and …Qe7.',
+    '4…Qh4 attacks e4 and f2 at once; meet it actively with 5.Nb5 rather than by passive defence.',
+    'Your d4 knight is often attacked by …Bc5, …Qf6 or …Qh4, so always check that it is safe.',
+    'Opening the position completely can favour Black’s bishop pair in the Mieses lines.',
+  ],
+  lines: [
+    {
+      name: 'Mieses Variation: 4…Nf6 5.Nxc6',
+      moves: ['e4', 'e5', 'Nf3', 'Nc6', 'd4', 'exd4', 'Nxd4', 'Nf6', 'Nxc6', 'bxc6', 'e5', 'Qe7', 'Qe2', 'Nd5', 'c4', 'Ba6', 'b3'],
+      notes: {
+        5: 'The **Scotch**: open the centre immediately for free piece play.',
+        6: 'Black has to take; the passive …d6 would leave Black cramped.',
+        7: 'Recapture with the knight. You have a pawn on e4; Black has no central pawn yet.',
+        8: 'Black counter-attacks e4, the main alternative to 4…Bc5.',
+        9: 'Exchange, damaging Black’s pawns, so that you can push e5.',
+        11: '**e5!** kicks the knight from its best square and gains space.',
+        12: 'Black attacks e5, with the queen also lined up on your king along the e-file.',
+        13: 'Defend the pawn and block the e-file.',
+        14: 'The knight goes to its only good central square.',
+        15: '**c4** kicks the knight again; your space advantage grows.',
+        16: 'Black pins the c4 pawn against your queen on e2.',
+        17: 'Protect c4 solidly. You have more space and the better pawn structure; Black has the bishop pair. Plans: Bb2, g3 and Bg2, then castle.',
+      },
+    },
+    {
+      name: 'Classical: 4…Bc5 5.Nxc6',
+      moves: ['e4', 'e5', 'Nf3', 'Nc6', 'd4', 'exd4', 'Nxd4', 'Bc5', 'Nxc6', 'Qf6', 'Qd2', 'dxc6', 'Nc3', 'Be6', 'Na4', 'Rd8', 'Bd3', 'Bd4', 'O-O'],
+      notes: {
+        8: 'Black develops with tempo, attacking the d4 knight.',
+        9: 'The modern answer: exchange before Black builds up pressure on d4.',
+        10: 'Threat: …Qxf2+, with the queen and bishop both hitting f2.',
+        11: '**Qd2** covers f2 along the second rank and keeps the queen flexible. (6.Qf3 is the other main move.)',
+        12: 'Black recaptures towards the centre, opening the d-file.',
+        13: 'Develop, covering d5 and supporting e4.',
+        14: 'Black develops and covers the d5 square.',
+        15: '**Na4** attacks the bishop on c5, aiming to win the bishop pair.',
+        16: 'Black puts a rook on the open d-file, facing your queen.',
+        17: 'Develop the bishop and prepare to castle.',
+        18: 'Black keeps the bishop centralised.',
+        19: 'Castle. Plans: c3 to kick the d4 bishop, then Qe2 and Be3. You have the better pawn structure (Black’s c-pawns are doubled).',
+      },
+    },
+    {
+      name: 'Steinitz: 4…Qh4 grabs e4',
+      moves: ['e4', 'e5', 'Nf3', 'Nc6', 'd4', 'exd4', 'Nxd4', 'Qh4', 'Nb5', 'Bb4+', 'Bd2', 'Qxe4+', 'Be2', 'Kd8', 'O-O'],
+      notes: {
+        8: 'An aggressive try: the queen attacks e4 and eyes f2.',
+        9: '**Nb5!** counter-attacks c7 and threatens Nxc7+, forking the king and the a8 rook.',
+        10: 'Black creates counterplay with a check.',
+        11: 'Block the check and develop.',
+        12: 'Black takes the pawn with check.',
+        13: 'Block again. You are a pawn down but far ahead in development.',
+        14: 'Black has to guard c7, and …Kd8 means giving up castling.',
+        15: 'Castle and open lines against the stranded black king with Re1, Bf3 and Nc3. White has excellent compensation and a lasting initiative.',
+      },
+    },
+  ],
+}

@@ -22,9 +22,9 @@ export const CFG = {
   minAdv: 200, // ... and keep at least this on later moves
   maxSecond: 150, // second-best move may be worth at most this (cp)
   maxBeforeAdv: 150, // position before the blunder: solver's eval at most this (non-mate puzzles)
-  maxBeforeMate: 600, // ... (mate puzzles)
+  maxBeforeMate: 1000, // ... (mate puzzles; a blunder into mate when already worse is still a fine puzzle)
   maxMaterialUpAdv: 2, // solver may be at most this many pawns up at the puzzle start (non-mate)
-  maxMaterialUpMate: 5,
+  maxMaterialUpMate: 6,
   maxSolverMovesMate: 6,
   maxSolverMovesAdv: 5,
   maxPuzzlesPerGame: 5,
@@ -34,10 +34,11 @@ export const CFG = {
 const VALUES = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 }
 
 // Game profiles: who is playing. Skill = Stockfish "Skill Level" (0-20).
+// scanNodes: per-position scan budget (weak games have shallow tactics: scan cheaper)
 const PROFILES = [
-  { name: 'novice', weight: 30, skill: [0, 3], bookProb: 0.45, bookMax: 6, randomPlies: [0, 2], lapse: 0 },
-  { name: 'casual', weight: 28, skill: [3, 8], bookProb: 0.75, bookMax: 10, randomPlies: [0, 4], lapse: 0.02, lapseSkill: [0, 3] },
-  { name: 'club', weight: 22, skill: [8, 14], bookProb: 0.85, bookMax: 14, randomPlies: [1, 4], lapse: 0.05, lapseSkill: [2, 7] },
+  { name: 'novice', weight: 28, skill: [0, 2], bookProb: 0.45, bookMax: 6, randomPlies: [0, 2], lapse: 0, scanNodes: 16000, branches: 3 },
+  { name: 'casual', weight: 26, skill: [3, 7], bookProb: 0.75, bookMax: 10, randomPlies: [0, 4], lapse: 0.04, lapseSkill: [0, 2], scanNodes: 22000, branches: 3 },
+  { name: 'club', weight: 26, skill: [9, 16], bookProb: 0.85, bookMax: 14, randomPlies: [1, 4], lapse: 0.12, lapseSkill: [0, 5], scanNodes: 30000, branches: 2 },
   {
     name: 'endgame',
     weight: 20,
@@ -47,8 +48,10 @@ const PROFILES = [
     randomPlies: [1, 4],
     lapse: 0.01,
     lapseSkill: [4, 9],
-    switchNpm: 32, // switch to the late skill once total non-pawn material drops to this
-    lateSkill: [1, 10],
+    switchNpm: 34, // switch to the late skill once total non-pawn material drops to this
+    lateSkill: [0, 7],
+    scanNodes: 30000,
+    branches: 3,
   },
 ]
 
@@ -127,7 +130,7 @@ export class Miner {
     this.verbose = verbose
     this.onPuzzle = onPuzzle
     this.shouldStop = shouldStop
-    this.stats = { games: 0, byProfile: {}, gamesByProfile: {}, plies: 0, scans: 0, candidates: 0, puzzles: 0, reject: {}, msScan: 0, msCook: 0, msPlay: 0 }
+    this.stats = { games: 0, byProfile: {}, gamesByProfile: {}, msByProfile: {}, plies: 0, scans: 0, candidates: 0, puzzles: 0, reject: {}, msScan: 0, msCook: 0, msPlay: 0 }
   }
 
   log(...a) {
@@ -162,6 +165,7 @@ export class Miner {
 
   async playGame(seed) {
     const rng = mulberry32(seed)
+    const gameStart = Date.now()
     const total = PROFILES.reduce((n, p) => n + p.weight, 0)
     let roll = rng() * total
     const profile = PROFILES.find((p) => (roll -= p.weight) < 0) ?? PROFILES[0]
@@ -186,10 +190,10 @@ export class Miner {
 
     while (ply < CFG.maxPly && !this.shouldStop()) {
       let over = chess.isGameOver()
-      if (!over && decided >= 4) over = true
+      if (!over && decided >= 6) over = true
       if (over) {
         // Rewind to an earlier balanced position and try a different continuation.
-        if (branches >= CFG.maxBranches || found >= CFG.maxPuzzlesPerGame) break
+        if (branches >= (profile.branches ?? CFG.maxBranches) || found >= CFG.maxPuzzlesPerGame) break
         const options = plies.filter(
           (p, i) => i >= 8 && i < plies.length - 6 && p.scan && Math.abs(scoreValue(p.scan)) <= 150 && p.move,
         )
@@ -220,7 +224,7 @@ export class Miner {
           entry.estimated = (prev.estimated ?? 0) + 1
         } else {
           const t = Date.now()
-          const r = await this.engine.search(fen, { nodes: CFG.scanNodes })
+          const r = await this.engine.search(fen, { nodes: profile.scanNodes ?? CFG.scanNodes })
           this.stats.msScan += Date.now() - t
           this.stats.scans++
           entry.scan = r.lines[0]?.score ?? null
@@ -252,7 +256,8 @@ export class Miner {
             }
           }
         }
-        if (entry.scan && Math.abs(scoreValue(entry.scan)) >= 600) decided++
+        // keep playing lopsided positions for a while: the winning side's mating attacks make mate puzzles
+        if (entry.scan && Math.abs(scoreValue(entry.scan)) >= 900) decided++
         else decided = 0
       }
 
@@ -276,7 +281,7 @@ export class Miner {
         move = r.move
         if (!switched && r.score) {
           // no scans before the endgame switch: use the move search score to stop lopsided games
-          if (Math.abs(scoreValue(r.score)) >= 700) decided++
+          if (Math.abs(scoreValue(r.score)) >= 900) decided++
           else decided = 0
         }
       }
@@ -293,6 +298,7 @@ export class Miner {
       this.stats.plies++
     }
     this.stats.games++
+    this.stats.msByProfile[profile.name] = (this.stats.msByProfile[profile.name] ?? 0) + (Date.now() - gameStart)
     this.stats.gamesByProfile[profile.name] = (this.stats.gamesByProfile[profile.name] ?? 0) + 1
     return found
   }

@@ -74,10 +74,10 @@ async function mine() {
   }
 
   const report = () => {
-    const agg = { games: 0, plies: 0, scans: 0, candidates: 0, puzzles: 0, msScan: 0, msCook: 0, msPlay: 0, reject: {}, byProfile: {}, gamesByProfile: {} }
+    const agg = { games: 0, plies: 0, scans: 0, candidates: 0, puzzles: 0, msScan: 0, msCook: 0, msPlay: 0, reject: {}, byProfile: {}, gamesByProfile: {}, msByProfile: {} }
     for (const s of stats.values()) {
       for (const k of ['games', 'plies', 'scans', 'candidates', 'puzzles', 'msScan', 'msCook', 'msPlay']) agg[k] += s[k]
-      for (const key of ['reject', 'byProfile', 'gamesByProfile'])
+      for (const key of ['reject', 'byProfile', 'gamesByProfile', 'msByProfile'])
         for (const [k, v] of Object.entries(s[key] ?? {})) agg[key][k] = (agg[key][k] ?? 0) + v
     }
     const min = (Date.now() - t0) / 60000
@@ -95,7 +95,7 @@ async function mine() {
   clearTimeout(deadline)
   const agg = report()
   console.log('rejections:', JSON.stringify(agg.reject))
-  console.log('puzzles by profile:', JSON.stringify(agg.byProfile), 'games by profile:', JSON.stringify(agg.gamesByProfile))
+  console.log('puzzles by profile:', JSON.stringify(agg.byProfile), 'games by profile:', JSON.stringify(agg.gamesByProfile), 'sec by profile:', JSON.stringify(Object.fromEntries(Object.entries(agg.msByProfile).map(([k, v]) => [k, Math.round(v / 1000)]))))
   process.removeListener('SIGINT', stopAll)
   process.removeListener('SIGTERM', stopAll)
 }
