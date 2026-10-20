@@ -3,6 +3,7 @@ import { HashRouter, NavLink, Route, Routes, useLocation, useNavigate } from 're
 import { BackIcon, BookIcon, BulbIcon, GearIcon, HomeIcon, KnightIcon, LearnIcon, MoreIcon, PuzzleIcon, SearchIcon } from './components/icons'
 import { unlockAudio } from './lib/sound'
 import { isStandalone, ShellContext } from './lib/shell'
+import { applyPendingUpdate } from './lib/update'
 import Home from './pages/Home'
 
 const loaders = {
@@ -86,6 +87,7 @@ function Shell() {
   }, [navigate, meta.parent])
 
   useEffect(() => window.scrollTo(0, 0), [location.pathname])
+  useEffect(applyPendingUpdate, [location.pathname])
 
   // Warm the other screens once the first one has painted, so switching tabs never shows a spinner.
   useEffect(() => {
