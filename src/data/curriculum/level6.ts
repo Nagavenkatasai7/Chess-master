@@ -1048,4 +1048,656 @@ export const level6: Module[] = [
       },
     ],
   },
+
+  // ─────────────────────────── 5. LEARNING FROM THE CLASSICS ───────────────────────────
+  {
+    id: 'l6-classics',
+    level: 6,
+    title: 'Learning from the classics',
+    description:
+      'One great player or era per lesson, from Anderssen to Carlsen: a famous game with notes at the key moments, a short biography and what to learn from each of them.',
+    lessons: [
+      {
+        id: 'l6-cl-anderssen',
+        title: 'Anderssen: the Immortal Game (1851)',
+        summary: 'The romantic era at its most spectacular: Anderssen gives up both rooks, a bishop and his queen to mate with three minor pieces.',
+        estMinutes: 15,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**Adolf Anderssen** (1818–1879) was a German mathematics teacher who won the first international chess tournament, London 1851, and was widely regarded as the strongest player in the world for much of the 1850s and 1860s, apart from Morphy's brief reign.\n\n" +
+              "He played in the **romantic** style of his time: open games, gambits and sacrifices, with the aim of attacking the enemy king as quickly as possible. Defence was poorly understood, and declining a sacrifice was considered almost cowardly.\n\n" +
+              "During the London tournament he played a casual game against Lionel Kieseritzky that was later christened **the Immortal Game**.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'e4', 'e5', 'f4', 'exf4', 'Bc4', 'Qh4+', 'Kf1', 'b5', 'Bxb5', 'Nf6', 'Nf3', 'Qh6', 'd3', 'Nh5', 'Nh4', 'Qg5',
+              'Nf5', 'c6', 'g4', 'Nf6', 'Rg1', 'cxb5', 'h4', 'Qg6', 'h5', 'Qg5', 'Qf3', 'Ng8', 'Bxf4', 'Qf6', 'Nc3', 'Bc5',
+              'Nd5', 'Qxb2', 'Bd6', 'Bxg1', 'e5', 'Qxa1+', 'Ke2', 'Na6', 'Nxg7+', 'Kd8',
+            ],
+            caption: 'Anderssen – Kieseritzky, London 1851 (casual game)',
+            notes: {
+              3: 'The King\'s Gambit, the most popular opening of the romantic era. White gives a pawn for quick development and the open f-file.',
+              6: 'White loses the right to castle. In 1851 nobody worried much about that.',
+              8: 'A counter-gambit: Black gives back a pawn to deflect the bishop.',
+              17: 'The knight lands on f5, eyeing g7.',
+              19: 'Another pawn offered, to drive the black queen and knight around.',
+              21: 'Anderssen calmly leaves the b5-bishop to be taken and keeps developing.',
+              30: 'Black\'s queen has already moved six times, while most of Black\'s other pieces are still at home.',
+              34: 'Black wins a pawn with an attack on the a1-rook.',
+              35: 'Anderssen offers *both* rooks. The bishop takes away f8 and e7 from the black king.',
+              37: 'A quiet move. The pawn cuts the black queen off from g7 and from the defence of the king.',
+              38: 'Black has won two rooks, but his king is about to be mated.',
+              41: 'The knight checks and drives the king to d8. White has a queen, two bishops and two knights left. How does he finish?',
+            },
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l6-cl-anderssen-ex1',
+              prompt: 'Anderssen – Kieseritzky 1851. White to move: mate in 2.',
+              fen: 'r1bk2nr/p2p1pNp/n2B4/1p1NP2P/6P1/3P1Q2/P1P1K3/q5b1 w - - 1 22',
+              goal: 'mate',
+              solution: ['Qf6+', 'Nxf6', 'Be7#'],
+              hint: 'Give up the last heavy piece too. Which bishop move then covers d8?',
+              explanation:
+                "22.Qf6+!! deflects the g8-knight. After 22...Nxf6 23.Be7# the bishop gives mate, protected by the d5-knight. The knight on d5 also covers c7, and the knight on g7 covers e8. White mates with three minor pieces after giving away both rooks, a bishop and the queen.",
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Anderssen\n\n" +
+              "- **Development and open lines win attacks.** At the end, White's minor pieces were all active while Black's queen was far away and his queenside pieces had never moved.\n" +
+              "- **Material is only one factor.** Anderssen counted *active* pieces, not captured ones.\n" +
+              "- **Look critically, too.** Modern engines find improvements for both sides: Black's greedy queen moves and White's 18.Bd6 are not the best moves objectively. The romantic era teaches you imagination and courage; the next generations taught chess players how to defend.",
+          },
+        ],
+      },
+      {
+        id: 'l6-cl-morphy',
+        title: 'Morphy: the Opera Game (1858)',
+        summary: 'Development, open lines and pins: the most instructive short game ever played, seen through a master\'s eyes.',
+        estMinutes: 12,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**Paul Morphy** (1837–1884) from New Orleans was the first player who seemed to *understand* why attacks succeed. In 1858–59 he toured Europe and beat almost every leading master, including Anderssen, and then retired from serious chess while still in his early twenties.\n\n" +
+              "Morphy's games look like the romantic games of his time, but there is a difference: his attacks were prepared by rapid development and the opening of lines, and he only sacrificed when his pieces were ready. Later writers such as Emanuel Lasker saw him as a forerunner of positional thinking.\n\n" +
+              "You may have met the Opera Game before. Play through it again, this time noting how *every* move serves development, the opening of lines or a pin.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'e4', 'e5', 'Nf3', 'd6', 'd4', 'Bg4', 'dxe5', 'Bxf3', 'Qxf3', 'dxe5', 'Bc4', 'Nf6', 'Qb3', 'Qe7', 'Nc3', 'c6',
+              'Bg5', 'b5', 'Nxb5', 'cxb5', 'Bxb5+', 'Nbd7', 'O-O-O', 'Rd8', 'Rxd7', 'Rxd7', 'Rd1', 'Qe6', 'Bxd7+', 'Nxd7',
+            ],
+            caption: 'Morphy – Duke Karl of Brunswick and Count Isouard, Paris 1858',
+            notes: {
+              5: 'Morphy opens the centre at once.',
+              6: 'A pin that costs Black the bishop pair and time.',
+              9: 'White has the two bishops and a lead in development.',
+              13: 'A double attack on f7 and b7.',
+              14: 'This defends f7 but blocks the f8-bishop, so Black falls further behind in development.',
+              15: 'Morphy prefers development to grabbing the b7-pawn. A lead in development is worth more than a pawn.',
+              19: 'A piece sacrifice to open lines against the uncastled king.',
+              22: 'The d7-knight is pinned to the king.',
+              23: 'Castling brings the rook to the d-file with gain of time: the d7-knight is now attacked twice.',
+              25: 'Morphy gives up the exchange to remove a defender.',
+              27: 'The last white piece joins in, renewing the pin.',
+              30: 'Black has a rook and a knight more than White. Find the finish.',
+            },
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l6-cl-morphy-ex1',
+              prompt: 'The Opera Game. White to move: mate in 2.',
+              fen: '4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 0 16',
+              goal: 'mate',
+              solution: ['Qb8+', 'Nxb8', 'Rd8#'],
+              hint: 'The d7-knight is the only piece guarding d8.',
+              explanation:
+                "16.Qb8+!! deflects the knight from d7. After 16...Nxb8 17.Rd8# the rook mates, protected by the g5-bishop. Morphy finished with just two pieces, but every one of his pieces had played a part.",
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Morphy\n\n" +
+              "- **Develop first, attack second.** Morphy did not move a piece twice in the opening without a reason, and he did not grab pawns while behind in development.\n" +
+              "- **Open lines towards the king** when you are better developed. A lead in development is temporary: use it before the opponent catches up.\n" +
+              "- **Pins are a weapon.** Morphy built the whole finish on the pin of the d7-knight, adding attackers until it collapsed.",
+          },
+        ],
+      },
+      {
+        id: 'l6-cl-capablanca',
+        title: 'Capablanca: simplicity and technique',
+        summary: 'Clear plans, active pieces and an eye for the decisive tactic: Bernstein – Capablanca, Moscow 1914.',
+        estMinutes: 14,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**José Raúl Capablanca** (1888–1942) from Havana was world champion from 1921, when he beat Emanuel Lasker, until 1927, when he lost to Alekhine. He was famous for losing very few games, for his effortless endgame technique and for his ability to find the simplest way to win.\n\n" +
+              "His book *Chess Fundamentals* (1921) is still recommended today. In the game below he plays Black against Ossip Bernstein, one of the strongest players of the time. Watch how Capablanca's pieces become steadily more active until a single tactical blow decides.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'd4', 'd5', 'c4', 'e6', 'Nc3', 'Nf6', 'Nf3', 'Be7', 'Bg5', 'O-O', 'e3', 'Nbd7', 'Rc1', 'b6', 'cxd5', 'exd5',
+              'Qa4', 'Bb7', 'Ba6', 'Bxa6', 'Qxa6', 'c5', 'Bxf6', 'Nxf6', 'dxc5', 'bxc5', 'O-O', 'Qb6', 'Qe2', 'c4',
+              'Rfd1', 'Rfd8', 'Nd4', 'Bb4', 'b3', 'Rac8', 'bxc4', 'dxc4', 'Rc2', 'Bxc3', 'Rxc3', 'Nd5', 'Rc2', 'c3',
+              'Rdc1', 'Rc5', 'Nb3', 'Rc6', 'Nd4', 'Rc7', 'Nb5', 'Rc5', 'Nxc3', 'Nxc3', 'Rxc3', 'Rxc3', 'Rxc3',
+            ],
+            caption: 'Bernstein – Capablanca, Moscow 1914',
+            notes: {
+              26: 'Black has accepted "hanging pawns" on c5 and d5 in return for free piece play.',
+              30: 'Capablanca advances, gaining space and cramping White. The d4-square is given up, but Black\'s pieces are ready to fight for it.',
+              34: 'The bishop pins the c3-knight and prepares to exchange it, increasing the pressure on c3.',
+              44: 'A passed pawn on c3, deep in White\'s position. It ties White\'s pieces down.',
+              53: 'White finally wins the c3-pawn. It looks as if the danger is over, but White\'s back rank has no escape square.',
+              57: 'Black to move. White\'s queen and rook look safe. Are they?',
+            },
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l6-cl-capablanca-ex1',
+              prompt: 'Bernstein – Capablanca 1914. Black to move: find the move Capablanca played.',
+              fen: '3r2k1/p4ppp/1q6/8/8/2R1P3/P3QPPP/6K1 b - - 0 29',
+              solution: ['Qb2'],
+              hint: 'White\'s back rank is weak. Attack two pieces at once with your queen.',
+              explanation:
+                "29...Qb2!! attacks both the queen on e2 and the rook on c3, and the queen cannot be taken: 30.Qxb2 Rd1#. White cannot keep everything: 30.Qe1 Qxc3! 31.Qxc3 Rd1+ 32.Qe1 Rxe1#, or 30.Rc2 Qb1+ 31.Qf1 Qxc2. Bernstein resigned. The whole game prepared this moment: active pieces, a weak back rank, and an overloaded defence.",
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Capablanca\n\n" +
+              "- **Simplicity.** Capablanca looked for the clearest plan, not the most spectacular one. When you are better, ask which move makes your task easiest.\n" +
+              "- **Piece activity beats static weaknesses.** His hanging pawns were a static weakness, but his pieces were more active, and activity decided.\n" +
+              "- **Endgame first.** Capablanca advised studying endgames before openings. Strong endgame technique lets you simplify into winning endings with confidence.\n" +
+              "- **Technique still needs tactics.** Even the great positional player finished with a sharp tactical blow.",
+          },
+        ],
+      },
+      {
+        id: 'l6-cl-alekhine',
+        title: 'Alekhine: the dynamic bind',
+        summary: 'Deep preparation, energy and the famous tripled pieces on the c-file: Alekhine – Nimzowitsch, San Remo 1930.',
+        estMinutes: 14,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**Alexander Alekhine** (1892–1946), born in Moscow and later a French citizen, took the world title from Capablanca in 1927 after a long, hard match. He lost it to Max Euwe in 1935, won it back in 1937, and died as champion in 1946.\n\n" +
+              "Alekhine combined thorough preparation with enormous energy at the board. He is remembered for brilliant combinations, but his deepest skill was creating positions in which combinations became possible, often by seizing space and squeezing the opponent first.\n\n" +
+              "At San Remo 1930 he scored 14 points from 15 games. Here he paralyses Aron Nimzowitsch, the great theoretician of positional chess, with his own weapons.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'e4', 'e6', 'd4', 'd5', 'Nc3', 'Bb4', 'e5', 'c5', 'Bd2', 'Ne7', 'Nb5', 'Bxd2+', 'Qxd2', 'O-O', 'c3', 'b6',
+              'f4', 'Ba6', 'Nf3', 'Qd7', 'a4', 'Nbc6', 'b4', 'cxb4', 'cxb4', 'Bb7', 'Nd6', 'f5', 'a5', 'Nc8', 'Nxb7', 'Qxb7',
+              'a6', 'Qf7', 'Bb5', 'N8e7', 'O-O', 'h6', 'Rfc1', 'Rfc8', 'Rc2', 'Qe8', 'Rac1', 'Rab8', 'Qe3', 'Rc7', 'Rc3', 'Qd7',
+              'R1c2', 'Kf8', 'Qc1', 'Rbc8', 'Ba4', 'b5', 'Bxb5', 'Ke8', 'Ba4', 'Kd8', 'h4',
+            ],
+            caption: 'Alekhine – Nimzowitsch, San Remo 1930',
+            notes: {
+              6: 'The Winawer Variation of the French Defence, one of Nimzowitsch\'s favourite systems.',
+              11: 'An unusual idea: the knight heads for d6, the hole in Black\'s position.',
+              23: 'Alekhine opens the queenside, where he has more space.',
+              27: 'The knight lands on d6.',
+              31: 'Alekhine exchanges the knight for Black\'s light-squared bishop, leaving Black weak on the light squares on the queenside.',
+              33: 'The a6-pawn cramps Black and fixes the b7-square as a permanent hole.',
+              35: 'The bishop pins the c6-knight, which becomes the target of the whole white army.',
+              43: 'The rooks double on the c-file.',
+              51: 'Rook, rook and queen are *tripled* on the c-file against the pinned knight. This is often called "Alekhine\'s gun".',
+              53: 'Threatening b5, winning the pinned knight.',
+              59: 'Black resigned. His pieces can barely move without losing the c6-knight, and after a couple of pawn moves he will run out of safe moves altogether.',
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Alekhine\n\n" +
+              "- **Space and restriction.** Alekhine's pawns on e5, f4, b4 and a6 took squares away from Black's pieces long before any tactics happened.\n" +
+              "- **Pile up on a fixed target.** Once the c6-knight was pinned, every white piece joined the pressure. This idea, of attacking a weakness with more pieces than can defend it, is a cornerstone of master strategy.\n" +
+              "- **Preparation and energy.** Alekhine prepared openings and opponents more thoroughly than anyone before him, and played every game at full intensity.",
+          },
+        ],
+      },
+      {
+        id: 'l6-cl-nimzowitsch',
+        title: 'Nimzowitsch: prophylaxis and zugzwang',
+        summary: 'The hypermodern revolution and the "Immortal Zugzwang Game": Sämisch – Nimzowitsch, Copenhagen 1923.',
+        estMinutes: 14,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**Aron Nimzowitsch** (1886–1935), born in Riga and later living in Denmark, was one of the leading players of the 1920s and the most influential chess writer of his age. His book *My System* (1925) gave names to ideas that strong players had used without explaining: **prophylaxis**, **blockade**, **overprotection**, the open file and the seventh rank.\n\n" +
+              "With Réti and Breyer he led the **hypermodern** school, which argued that the centre need not be occupied by pawns at once: it can be controlled from a distance by pieces, and the opponent's pawn centre can become a target.\n\n" +
+              "In this famous game, Nimzowitsch slowly takes away every useful move from his opponent until White is in zugzwang in the middlegame, with most of the pieces still on the board.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'd4', 'Nf6', 'c4', 'e6', 'Nf3', 'b6', 'g3', 'Bb7', 'Bg2', 'Be7', 'Nc3', 'O-O', 'O-O', 'd5', 'Ne5', 'c6',
+              'cxd5', 'cxd5', 'Bf4', 'a6', 'Rc1', 'b5', 'Qb3', 'Nc6', 'Nxc6', 'Bxc6', 'h3', 'Qd7', 'Kh2', 'Nh5', 'Bd2', 'f5',
+              'Qd1', 'b4', 'Nb1', 'Bb5', 'Rg1', 'Bd6', 'e4', 'fxe4', 'Qxh5', 'Rxf2', 'Qg5', 'Raf8', 'Kh1', 'R8f5', 'Qe3', 'Bd3',
+              'Rce1', 'h6',
+            ],
+            caption: 'Sämisch – Nimzowitsch, Copenhagen 1923',
+            notes: {
+              6: 'The Queen\'s Indian Defence, a typical hypermodern opening: Black controls e4 with pieces rather than pawns.',
+              22: 'Black gains space on the queenside.',
+              32: 'Black takes control of e4 and prepares to use the f-file.',
+              34: 'The c3-knight is driven back to b1, where it blocks the white queenside.',
+              36: 'The bishop takes the f1–a6 diagonal, so the white rooks cannot easily coordinate.',
+              39: 'White tries to break free in the centre.',
+              40: 'Nimzowitsch gives up the h5-knight. In return he gets two pawns, a rook on the second rank and total control of the position.',
+              42: 'The rook invades f2.',
+              44: 'Black doubles on the f-file.',
+              48: 'The bishop occupies d3, cutting White\'s position in two.',
+              50: 'A quiet waiting move, and White resigned. He is in **zugzwang**: almost every white move loses material or allows a decisive blow, while Black can simply wait.',
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Nimzowitsch\n\n" +
+              "- **Prophylaxis.** Before making your own plans, ask what your opponent wants to do and how to prevent it. Nimzowitsch spent the whole game taking away White's ideas.\n" +
+              "- **Restrict, then strike.** The white knight on b1, the bishop on g2 and the rooks on the first rank were not lost, just useless. A piece that has no good moves is almost as bad as a piece that has been captured.\n" +
+              "- **Zugzwang is not only for endgames.** When the opponent has no useful moves left, a quiet waiting move can be the strongest move on the board.",
+          },
+        ],
+      },
+      {
+        id: 'l6-cl-tal',
+        title: 'Tal: the magician from Riga',
+        summary: 'Initiative, sacrifices and practical pressure: Tal – Smyslov, Candidates Tournament 1959.',
+        estMinutes: 15,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**Mikhail Tal** (1936–1992) from Riga was the most daring attacking player of the twentieth century. He won the Candidates Tournament of 1959 and then beat Mikhail Botvinnik in 1960 to become world champion at 23. Botvinnik won the return match in 1961, partly because Tal was often seriously ill, but Tal remained among the world's best for thirty years.\n\n" +
+              "Tal's sacrifices were not always objectively correct, and engines have since refuted some of them. But at the board they were very hard to answer. He believed in creating positions so complicated that the opponent would go wrong first.\n\n" +
+              "Against former world champion Vasily Smyslov, Tal chose a quiet opening and then threw his pieces at the black king.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'e4', 'c6', 'd3', 'd5', 'Nd2', 'e5', 'Ngf3', 'Nd7', 'd4', 'dxe4', 'Nxe4', 'exd4', 'Qxd4', 'Ngf6', 'Bg5', 'Be7',
+              'O-O-O', 'O-O', 'Nd6', 'Qa5', 'Bc4', 'b5', 'Bd2', 'Qa6', 'Nf5', 'Bd8', 'Qh4', 'bxc4', 'Qg5', 'Nh5', 'Nh6+', 'Kh8',
+              'Qxh5', 'Qxa2', 'Bc3', 'Nf6', 'Qxf7', 'Qa1+', 'Kd2', 'Rxf7', 'Nxf7+', 'Kg8', 'Rxa1', 'Kxf7', 'Ne5+', 'Ke6',
+              'Nxc6', 'Ne4+', 'Ke3', 'Bb6+', 'Bd4',
+            ],
+            caption: 'Tal – Smyslov, Candidates Tournament, Yugoslavia 1959',
+            notes: {
+              3: 'A quiet, unusual move against the Caro-Kann, avoiding Smyslov\'s preparation.',
+              18: 'Opposite-side castling: both sides will race to attack.',
+              19: 'The knight jumps into d6, deep in the black position.',
+              21: 'Tal develops the bishop to c4, where it can be attacked by ...b5. He does not mind.',
+              27: 'Tal ignores the attack on his bishop and moves the queen towards the black king.',
+              28: 'Black wins a piece.',
+              29: 'The queen and the f5-knight both attack g7.',
+              31: 'The knight check drives the king into the corner, and next move the queen wins back the piece on h5.',
+              34: 'Smyslov counterattacks against the white king.',
+              37: 'Another sacrifice. The queen takes on f7, and the knight on h6 is ready to give check on f7 if Black recaptures.',
+              38: 'Black first gives a check with his own queen.',
+              41: 'The knight recaptures with check, and the black queen on a1 is about to fall.',
+              44: 'The dust settles: White has won back the queen and is the exchange ahead.',
+              47: 'The second knight wins the c6-pawn and attacks the d8-bishop and the a7-pawn.',
+              51: 'Black resigned. White is the exchange and a pawn up, and his pieces dominate.',
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Tal\n\n" +
+              "- **The initiative has value.** Tal measured positions by activity and attacking chances, not only by material. A lasting initiative is often worth a pawn or even a piece.\n" +
+              "- **Create problems.** A position full of threats is hard to defend even if it is objectively fine. In practical play, the side asking the questions often wins.\n" +
+              "- **Calculate *and* trust your intuition.** Tal calculated superbly, but he also accepted that some sacrifices cannot be calculated to the end. Learn to judge when the risk is worth it.\n" +
+              "- **But check your attacks later.** Analyse your own sacrifices with an engine after the game. You will learn which ones were sound and which ones only worked because your opponent went wrong.",
+          },
+        ],
+      },
+      {
+        id: 'l6-cl-petrosian',
+        title: 'Petrosian: prophylaxis and safety',
+        summary: 'The great defender who prevented his opponents\' plans before they began, and could also strike like lightning: Petrosian – Pachman, Bled 1961.',
+        estMinutes: 14,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**Tigran Petrosian** (1929–1984), born in Tbilisi to an Armenian family, was world champion from 1963, when he beat Botvinnik, until 1969, when he lost to Boris Spassky (whom he had beaten in 1966). His nickname was \"Iron Tigran\": in some years he hardly lost a game.\n\n" +
+              "Petrosian took Nimzowitsch's idea of **prophylaxis** further than anyone. He often sensed his opponent's plan several moves before it appeared and quietly stopped it. He was also the master of the **positional exchange sacrifice**: giving a rook for a minor piece to gain lasting control of key squares.",
+          },
+          {
+            type: 'line',
+            moves: ['d4', 'Nf6', 'c4', 'e6', 'Nf3', 'b6', 'a3'],
+            caption: 'The Petrosian System against the Queen\'s Indian',
+            notes: {
+              7: 'A pure prophylactic move: 4.a3 prevents ...Bb4, so White can play Nc3, d5 or e4 later without being pinned. Petrosian used it for decades, and Kasparov made it one of his main weapons.',
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "Prophylaxis does not mean passivity. When the position called for it, Petrosian attacked with deadly precision. Here is one of his best-known combinations.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'Nf3', 'c5', 'g3', 'Nc6', 'Bg2', 'g6', 'O-O', 'Bg7', 'd3', 'e6', 'e4', 'Nge7', 'Re1', 'O-O', 'e5', 'd6',
+              'exd6', 'Qxd6', 'Nbd2', 'Qc7', 'Nb3', 'Nd4', 'Bf4', 'Qb6', 'Ne5', 'Nxb3', 'Nc4', 'Qb5', 'axb3', 'a5',
+              'Bd6', 'Bf6', 'Qf3', 'Kg7', 'Re4', 'Rd8',
+            ],
+            caption: 'Petrosian – Pachman, Bled 1961',
+            notes: {
+              3: 'A King\'s Indian Attack set-up: quiet and flexible.',
+              15: 'White gains space in the centre and cramps Black\'s kingside.',
+              25: 'An in-between move. If Black takes on b3, White attacks the queen first and recaptures afterwards.',
+              29: 'Material is level, White\'s knight is strong on c4 and the a-file is half-open.',
+              31: 'The bishop lands on d6, a superb square inside Black\'s camp.',
+              33: 'The queen attacks the f6-bishop and eyes the long diagonal.',
+              35: 'The rook swings to the kingside along the fourth rank.',
+              36: 'Black attacks the d6-bishop. White to move has a crushing reply.',
+            },
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l6-cl-petrosian-ex1',
+              prompt: 'Petrosian – Pachman 1961. White to move and win: find the sacrifice and the follow-up (three white moves).',
+              fen: 'r1br4/1p2npkp/3Bpbp1/pqp5/2N1R3/1P1P1QP1/1PP2PBP/R5K1 w - - 6 19',
+              solution: ['Qxf6+', 'Kxf6', 'Be5+', 'Kg5', 'Bg7'],
+              hint: 'Remove the f6-bishop with check and drag the king forward. The final move is a quiet one.',
+              explanation:
+                "19.Qxf6+!! Kxf6 (declining with 19...Kg8 leaves White a piece up with a crushing attack) 20.Be5+ Kg5 21.Bg7!, a quiet move that takes h6 away from the king. White threatens 22.h4+ Kf5 23.Ne3#, and 21...Kh5 is met by 22.Rh4+ Kg5 23.f4+ Kf5 24.Be4#. Pachman resigned.",
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Petrosian\n\n" +
+              "- **Ask what your opponent wants**, every move. Often the strongest move is the one that makes his plan impossible.\n" +
+              "- **Safety first, then the win.** Petrosian rarely took risks he did not need, which made him extremely hard to beat.\n" +
+              "- **The exchange is not sacred.** A rook for a minor piece can be a good deal if it gives you lasting control of key squares or kills the opponent's counterplay.\n" +
+              "- **Know when to switch.** A defensive player who spots a combination must play it. Petrosian did.",
+          },
+        ],
+      },
+      {
+        id: 'l6-cl-fischer',
+        title: 'Fischer: the Game of the Century (1956)',
+        summary: 'A 13-year-old punishes neglected development with a queen sacrifice and a windmill of discovered checks: Byrne – Fischer, New York 1956.',
+        estMinutes: 16,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**Robert James \"Bobby\" Fischer** (1943–2008) from Brooklyn won the US Championship at 14 and became a grandmaster at 15. In the 1971 Candidates matches he beat Mark Taimanov and Bent Larsen without losing a game, and in 1972 he defeated Boris Spassky in Reykjavik to become world champion. He did not defend his title in 1975, and it passed to Karpov.\n\n" +
+              "Fischer's play was clear, energetic and enormously well prepared. His book *My 60 Memorable Games* is one of the best game collections ever written, and he also invented the increment clock and Fischer Random Chess (Chess960).\n\n" +
+              "In October 1956, aged 13, he played this game against Donald Byrne, one of America's leading players. Hans Kmoch called it **\"The Game of the Century\"**.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'Nf3', 'Nf6', 'c4', 'g6', 'Nc3', 'Bg7', 'd4', 'O-O', 'Bf4', 'd5', 'Qb3', 'dxc4', 'Qxc4', 'c6', 'e4', 'Nbd7',
+              'Rd1', 'Nb6', 'Qc5', 'Bg4', 'Bg5', 'Na4', 'Qa3', 'Nxc3', 'bxc3', 'Nxe4', 'Bxe7', 'Qb6', 'Bc4', 'Nxc3', 'Bc5',
+              'Rfe8+', 'Kf1',
+            ],
+            caption: 'Donald Byrne – Robert Fischer, Rosenwald Memorial, New York 1956',
+            notes: {
+              10: 'The position becomes a Grünfeld Defence.',
+              13: 'White wins back the pawn, but his queen has already moved twice.',
+              19: 'The queen moves yet again. White has not castled and his f1-bishop is still at home.',
+              20: 'Black develops with a pin on the f3-knight.',
+              22: 'A stunning move: the knight offers itself. If 12.Nxa4, 12...Nxe4 opens the long diagonal and the e-file with a powerful attack.',
+              26: 'Black has won a pawn and the e-file is opening against the white king.',
+              27: 'The bishop takes on e7 and attacks the queen and the f8-rook.',
+              28: 'Fischer leaves the rook to be taken.',
+              30: 'Another blow: the knight takes on c3 and attacks the rook on d1.',
+              31: 'The bishop attacks the black queen.',
+              32: 'A check first, before dealing with the queen.',
+              33: 'The black queen is still attacked. What did the 13-year-old play?',
+            },
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l6-cl-fischer-ex1',
+              prompt: 'Byrne – Fischer 1956. Black to move. Your queen is attacked: find Fischer\'s famous reply.',
+              fen: 'r3r1k1/pp3pbp/1qp3p1/2B5/2BP2b1/Q1n2N2/P4PPP/3R1K1R b - - 3 17',
+              solution: ['Be6'],
+              hint: 'Do not save the queen. Look at the white king on f1 and the bishop on c4.',
+              explanation:
+                "17...Be6!! offers the queen to start a decisive attack. If 18.Bxe6, then 18...Qb5+ 19.Kg1 Ne2+ 20.Kf1 Ng3+ 21.Kg1 Qf1+!! 22.Rxf1 Ne2# is a smothered mate. In the game Byrne took the queen with 18.Bxb6, and Black's bishop and knight started a 'windmill' of checks that collected far more than enough material for the queen.",
+            },
+          },
+          {
+            type: 'line',
+            fen: 'r3r1k1/pp3pbp/1qp1b1p1/2B5/2BP4/Q1n2N2/P4PPP/3R1K1R w - - 4 18',
+            moves: [
+              'Bxb6', 'Bxc4+', 'Kg1', 'Ne2+', 'Kf1', 'Nxd4+', 'Kg1', 'Ne2+', 'Kf1', 'Nc3+', 'Kg1', 'axb6', 'Qb4', 'Ra4',
+              'Qxb6', 'Nxd1', 'h3', 'Rxa2', 'Kh2', 'Nxf2', 'Re1', 'Rxe1', 'Qd8+', 'Bf8', 'Nxe1', 'Bd5', 'Nf3', 'Ne4',
+              'Qb8', 'b5', 'h4', 'h5', 'Ne5', 'Kg7', 'Kg1', 'Bc5+', 'Kf1', 'Ng3+', 'Ke1', 'Bb4+', 'Kd1', 'Bb3+', 'Kc1',
+              'Ne2+', 'Kb1', 'Nc3+', 'Kc1', 'Rc2#',
+            ],
+            caption: 'The windmill and the final hunt',
+            notes: {
+              1: 'Byrne takes the queen.',
+              2: 'The bishop takes with check, and the windmill begins.',
+              6: 'A discovered check from the c4-bishop, picking up the d4-pawn.',
+              10: 'Another discovered check. Only now does Black take time to recapture on b6.',
+              12: 'Black has two bishops and two extra pawns for the queen, and more is coming: the a8-rook attacks the white queen and the knight attacks the d1-rook.',
+              16: 'Black now has two rooks, two bishops and a knight against queen, rook and knight.',
+              25: 'The white queen and knight cannot hold back Black\'s rook, two bishops, knight and extra pawns.',
+              36: 'The minor pieces start to hunt the white king.',
+              48: 'Rook, bishop and knight combine for mate.',
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Fischer\n\n" +
+              "- **Punish neglected development.** Byrne moved his queen four times in the first twelve moves and never castled. Fischer opened lines at once and let his better-developed pieces decide.\n" +
+              "- **Count activity, not just material.** After the queen sacrifice Black's pieces worked together perfectly, while the white queen was out of play.\n" +
+              "- **Clarity and hard work.** Fischer's adult games are models of clear plans and exact technique, built on hours of daily study. He studied the classics, including Morphy and Steinitz, as seriously as the latest theory.",
+          },
+        ],
+      },
+      {
+        id: 'l6-cl-karpov',
+        title: 'Karpov: the positional squeeze',
+        summary: 'Space, restriction and the second weakness: Karpov – Unzicker, Nice Olympiad 1974.',
+        estMinutes: 15,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**Anatoly Karpov** (born 1951) became world champion in 1975, when Fischer did not defend his title. He proved he was a worthy champion by defending it twice against Viktor Korchnoi (1978 and 1981) and by winning an enormous number of tournaments. He lost the title to Garry Kasparov in 1985, in the second of their five world championship matches, and was FIDE world champion again from 1993 to 1999.\n\n" +
+              "Karpov's style was economical and almost risk-free. He gained space, took away his opponent's active possibilities one by one, and converted small advantages with remarkable smoothness. Many of his wins look simple, which is exactly what makes them so hard to imitate.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'e4', 'e5', 'Nf3', 'Nc6', 'Bb5', 'a6', 'Ba4', 'Nf6', 'O-O', 'Be7', 'Re1', 'b5', 'Bb3', 'd6', 'c3', 'O-O',
+              'h3', 'Na5', 'Bc2', 'c5', 'd4', 'Qc7', 'Nbd2', 'Nc6', 'd5', 'Nd8', 'a4', 'Rb8', 'axb5', 'axb5', 'b4', 'Nb7',
+              'Nf1', 'Bd7', 'Be3', 'Ra8', 'Qd2', 'Rfc8', 'Bd3', 'g6', 'Ng3', 'Bf8', 'Ra2', 'c4', 'Bb1', 'Qd8', 'Ba7', 'Ne8',
+              'Bc2', 'Nc7', 'Rea1', 'Qe7', 'Bb1', 'Be8', 'Ne2', 'Nd8', 'Nh2', 'Bg7', 'f4', 'f6', 'f5', 'g5', 'Bc2', 'Bf7',
+              'Ng3', 'Nb7', 'Bd1', 'h6', 'Bh5', 'Qe8', 'Qd1', 'Nd8', 'Ra3', 'Kf8', 'R1a2', 'Kg8', 'Ng4', 'Kf8', 'Ne3', 'Kg8',
+              'Bxf7+', 'Nxf7', 'Qh5', 'Nd8', 'Qg6', 'Kf8', 'Nh5',
+            ],
+            caption: 'Karpov – Unzicker, Nice Olympiad 1974',
+            notes: {
+              25: 'White closes the centre. Black\'s knights now have few good squares.',
+              27: 'Karpov starts play on the queenside, where he has more space.',
+              31: 'The b4-pawn fixes the queenside and takes the a5-square away from the black knight.',
+              43: 'White prepares to double rooks on the a-file.',
+              44: 'Black closes the queenside, but now the pawns there are fixed and White owns the a-file.',
+              47: 'A striking move: the bishop plants itself in front of Black\'s rook on a8. Black can never challenge the a-file, while White\'s rooks can double behind the bishop.',
+              51: 'Both white rooks are on the a-file. Black can only wait.',
+              59: 'With the queenside under control, Karpov opens a second front on the kingside: the principle of two weaknesses.',
+              61: 'More space on the kingside.',
+              69: 'The bishop comes to h5 to exchange Black\'s important light-squared bishop.',
+              81: 'The exchange weakens the light squares around the black king.',
+              85: 'The queen invades on g6.',
+              87: 'Black resigned. Nothing is lost yet, but he has no useful moves at all, and White can prepare the breakthrough at leisure.',
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Karpov\n\n" +
+              "- **Restrict before you attack.** Karpov took away Black's play on the queenside first, and only then opened a second front.\n" +
+              "- **The principle of two weaknesses.** One front can be defended; two fronts, far apart, usually cannot.\n" +
+              "- **Small moves matter.** Moves such as 24.Ba7 or the slow regrouping of the knights look modest, but each one removed an option from the opponent.\n" +
+              "- **Economy.** Karpov rarely spent more energy, time or risk than the position required. That is a skill every tournament player can learn.",
+          },
+        ],
+      },
+      {
+        id: 'l6-cl-kasparov',
+        title: 'Kasparov: dynamism and deep calculation',
+        summary: 'A rook sacrifice that drags the king across the board: Kasparov – Topalov, Wijk aan Zee 1999.',
+        estMinutes: 18,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**Garry Kasparov** (born 1963) beat Karpov in 1985 to become the youngest world champion up to that time, and held the title until he lost to Vladimir Kramnik in 2000. He was the world's top-rated player for most of twenty years, and his peak rating of 2851 (1999) stood as the record until Carlsen passed it. He retired from professional chess in 2005.\n\n" +
+              "Kasparov combined unprecedented opening preparation with fierce dynamism: the initiative, piece activity and concrete calculation mattered more to him than static factors. He was also one of the first top players to build his preparation around computers.\n\n" +
+              "His game against Veselin Topalov at Wijk aan Zee 1999 is often called **Kasparov's Immortal**.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'e4', 'd6', 'd4', 'Nf6', 'Nc3', 'g6', 'Be3', 'Bg7', 'Qd2', 'c6', 'f3', 'b5', 'Nge2', 'Nbd7', 'Bh6', 'Bxh6',
+              'Qxh6', 'Bb7', 'a3', 'e5', 'O-O-O', 'Qe7', 'Kb1', 'a6', 'Nc1', 'O-O-O', 'Nb3', 'exd4', 'Rxd4', 'c5', 'Rd1', 'Nb6',
+              'g3', 'Kb8', 'Na5', 'Ba8', 'Bh3', 'd5', 'Qf4+', 'Ka7', 'Rhe1', 'd4', 'Nd5', 'Nbxd5', 'exd5', 'Qd6',
+            ],
+            caption: 'Kasparov – Topalov, Wijk aan Zee 1999: the build-up',
+            notes: {
+              6: 'The Pirc Defence.',
+              9: 'White plans Bh6 to exchange Black\'s important dark-squared bishop, and long castling.',
+              12: 'Topalov expands on the queenside.',
+              26: 'Black also castles queenside, behind his advanced pawns.',
+              35: 'The knight lands on a5, next to the black king, and cannot easily be driven away.',
+              37: 'The bishop aims at the c8–h3 diagonal.',
+              39: 'A check that drives the king to a7.',
+              41: 'Every white piece is in play.',
+              46: 'This is the position from the calculation lesson. Kasparov now played one of the most famous combinations in chess history.',
+            },
+          },
+          {
+            type: 'line',
+            fen: 'b2r3r/k4p1p/p2q1np1/NppP4/3p1Q2/P4PPB/1PP4P/1K1RR3 w - - 1 24',
+            moves: [
+              'Rxd4', 'cxd4', 'Re7+', 'Kb6', 'Qxd4+', 'Kxa5', 'b4+', 'Ka4', 'Qc3', 'Qxd5', 'Ra7', 'Bb7', 'Rxb7', 'Qc4',
+              'Qxf6', 'Kxa3', 'Qxa6+', 'Kxb4', 'c3+', 'Kxc3', 'Qa1+', 'Kd2', 'Qb2+', 'Kd1', 'Bf1', 'Rd2', 'Rd7', 'Rxd7',
+              'Bxc4', 'bxc4', 'Qxh8', 'Rd3', 'Qa8', 'c3', 'Qa4+', 'Ke1', 'f4', 'f5', 'Kc1', 'Rd2', 'Qa7',
+            ],
+            caption: 'The combination: 24.Rxd4!!',
+            notes: {
+              1: 'A rook sacrifice to drag the black king forward.',
+              3: 'The second rook joins with check.',
+              6: 'The king takes the a5-knight and now stands in front of all his own pieces.',
+              8: 'The king is forced further up the board.',
+              9: 'A quiet move in the middle of the attack, threatening Qb3#.',
+              10: 'The black queen covers b3.',
+              11: 'The rook attacks the a8-bishop.',
+              13: 'White removes the bishop that was guarding a6.',
+              15: 'The queen picks up the f6-knight and prepares to return to the a-file.',
+              16: 'The black king walks into White\'s camp.',
+              19: 'Another pawn sacrifice drives the king on.',
+              24: 'The black king has been chased from a7 to d1.',
+              25: 'The most famous move of the game: a quiet bishop move with the black king on d1. The bishop attacks the black queen.',
+              27: 'A deflection: after 37...Rxd7 the black rook no longer attacks the white queen on b2, so White can take the black queen and then the h8-rook.',
+              31: 'The smoke has cleared: queen against rook.',
+              41: 'Topalov resigned. Queen against rook is a technical win.',
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Kasparov\n\n" +
+              "- **Dynamic factors can outweigh material.** Kasparov gave up a rook because the black king's exposure was worth more than the material.\n" +
+              "- **Calculate concretely, but trust your judgement.** Engines have since found improvements for both sides, so the combination was not fully forced. No human could have calculated all of it at the board; Kasparov judged that the attack *had* to work and calculated enough to be sure the risk was justified.\n" +
+              "- **Preparation and energy.** Kasparov prepared openings more deeply than anyone before him and played every game at full intensity. His *My Great Predecessors* series is also a superb history of the world champions.",
+          },
+        ],
+      },
+      {
+        id: 'l6-cl-carlsen',
+        title: 'Carlsen: the universal player',
+        summary: 'The highest-rated player in history. A sacrificial attack at 13, and a style built on pressure, technique and practical decisions.',
+        estMinutes: 15,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "**Magnus Carlsen** (born 1990) from Norway became a grandmaster in 2004 at the age of 13. He won the world title from Viswanathan Anand in 2013, defended it against Anand, Sergey Karjakin, Fabiano Caruana and Ian Nepomniachtchi, and chose not to defend it in 2023. His peak rating of 2882 (2014) is the highest in history, and he has also won many world titles in rapid and blitz.\n\n" +
+              "Carlsen is a **universal** player. He is comfortable in every type of position, but his trademark is grinding out wins from positions that look equal: keeping the pieces on, posing small problems move after move, and outplaying opponents in long endgames.\n\n" +
+              "The game below, from the year he became a grandmaster, shows another side of him: a young player calculating a sacrificial attack to the end.",
+          },
+          {
+            type: 'line',
+            moves: [
+              'e4', 'c6', 'd4', 'd5', 'Nc3', 'dxe4', 'Nxe4', 'Bf5', 'Ng3', 'Bg6', 'h4', 'h6', 'Nf3', 'Nd7', 'h5', 'Bh7',
+              'Bd3', 'Bxd3', 'Qxd3', 'e6', 'Bf4', 'Ngf6', 'O-O-O', 'Be7', 'Ne4', 'Qa5', 'Kb1', 'O-O', 'Nxf6+', 'Nxf6',
+              'Ne5', 'Rad8', 'Qe2', 'c5', 'Ng6', 'fxg6', 'Qxe6+', 'Kh8', 'hxg6', 'Ng8', 'Bxh6', 'gxh6', 'Rxh6+', 'Nxh6',
+              'Qxe7', 'Nf7', 'gxf7', 'Kg7', 'Rd3', 'Rd6', 'Rg3+', 'Rg6',
+            ],
+            caption: 'Carlsen – Ernst, Wijk aan Zee 2004',
+            notes: {
+              8: 'The Classical Caro-Kann.',
+              11: 'White gains space and harasses the bishop.',
+              23: 'White castles queenside.',
+              28: 'Black castles on the other side, so both sides can attack.',
+              34: 'Black strikes back in the centre.',
+              35: 'The 13-year-old sacrifices a knight. If Black takes, the e6-pawn falls with check and the h-file opens.',
+              39: 'The pawn on g6 takes the f7- and h7-squares from the black king.',
+              41: 'Another sacrifice to tear open the kingside.',
+              43: 'And a rook sacrifice.',
+              45: 'Black is still well ahead in material, but his king has no defenders left.',
+              49: 'The last white piece joins the attack along the third rank.',
+              52: 'Black blocks the check. How does White finish?',
+            },
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l6-cl-carlsen-ex1',
+              prompt: 'Carlsen – Ernst 2004. White to move and win. Find the queen checks Carlsen played.',
+              fen: '5r2/pp2QPk1/6r1/q1p5/3P4/6R1/PPP2PP1/1K6 w - - 5 27',
+              solution: ['Qe5+', 'Kxf7', 'Qf5+', 'Rf6', 'Qd7#'],
+              hint: 'Check from e5 on the long diagonal. The f7-pawn is a powerful helper.',
+              explanation:
+                "27.Qe5+ Kxf7 28.Qf5+ Rf6? 29.Qd7# and the queen and the g3-rook trap the king in the middle of the board. 28...Ke7 would have lasted longer, but 29.Re3+ Kd8 30.Qxf8+ wins easily. Black's extra material was no help: none of his pieces could reach the king in time.",
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### What to learn from Carlsen\n\n" +
+              "- **Keep playing.** Carlsen wins many \"equal\" positions simply because he keeps asking questions long after others would agree a draw.\n" +
+              "- **Endgames are a weapon.** He happily exchanges into endings where he can outplay his opponent slowly. Strong endgame technique turns small edges into points.\n" +
+              "- **Practical decisions.** He often chooses the move that is most unpleasant for the opponent rather than the engine's top line, and manages his clock and energy superbly.\n" +
+              "- **Fitness and joy.** Carlsen takes physical training seriously and has always played with obvious enjoyment. Both help over a long career.",
+          },
+        ],
+      },
+    ],
+  },
 ]

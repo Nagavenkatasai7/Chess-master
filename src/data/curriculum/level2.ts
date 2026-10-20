@@ -722,4 +722,328 @@ const safetyModule: Module = {
   ],
 }
 
-export const level2: Module[] = [openingModule, safetyModule]
+// ---------------------------------------------------------------------------
+// Module 3 · Basic checkmates
+// ---------------------------------------------------------------------------
+
+const matesModule: Module = {
+  id: 'l2-mates',
+  level: 2,
+  title: 'Basic Checkmates',
+  description: 'Finish the job: the two-rook ladder, queen and king against king, rook and king against king, and the back-rank mate.',
+  lessons: [
+    {
+      id: 'l2-mate-ladder',
+      title: 'The two-rook ladder',
+      summary: 'Two rooks take turns giving check and walk the king to the edge like climbing a ladder.',
+      estMinutes: 7,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            Winning lots of material is great, but you still have to **deliver checkmate**. In this module you will learn the basic mates that every chess player must know by heart. They come up again and again at the end of games.
+
+            The easiest one uses **two rooks** (or a rook and a queen). You do not even need your king!
+
+            ### How the ladder works
+
+            - One rook **cuts off** the king along a rank, like a wall it cannot cross.
+            - The other rook gives **check** on the next rank, pushing the king back one step.
+            - Now the rooks swap jobs: the rook that was the wall jumps ahead and gives the next check.
+
+            Step by step, the king is pushed to the edge, where the final check is checkmate.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '8/8/8/4k3/R7/8/8/1R4K1 w - - 0 1',
+          arrows: [['b1', 'b5']],
+          highlights: ['b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4'],
+          caption: 'The rook on a4 is a wall: the black king may not cross the 4th rank. Next, Rb5+ pushes it back again.',
+        },
+        {
+          type: 'line',
+          fen: '8/8/8/4k3/R7/8/8/1R4K1 w - - 0 1',
+          moves: ['Rb5+', 'Kd6', 'Ra6+', 'Kc7', 'Rh5', 'Kb7', 'Rg6', 'Kc7', 'Rh7+', 'Kd8', 'Rg8#'],
+          caption: 'Climbing the ladder, and what to do when the king attacks a rook.',
+          notes: {
+            1: 'Check! The king must go up to the 6th rank, because the a4-rook guards the 4th.',
+            3: 'The rooks swap jobs. Now the b5-rook is the wall and the a-rook checks.',
+            4: 'The king runs towards the rooks. If White played Rb7+ now, the king would simply take it.',
+            5: 'So the rook swings far away to h5, where the king can never reach it. From there it can still give the next check on the 7th rank.',
+            6: 'The king attacks the rook on a6.',
+            7: 'That rook also escapes to the far side, while still guarding the 6th rank.',
+            9: 'Check from far away. The king must go to the back rank.',
+            11: 'Checkmate. One rook guards the 7th rank, the other checks along the 8th.',
+          },
+        },
+        {
+          type: 'tip',
+          title: 'If the king gets close',
+          md: md(`
+            When the enemy king walks up to one of your rooks, do not panic and do not defend it. Just **move that rook to the far side of the board**, on the same rank, and carry on climbing the ladder.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-mate-ladder-ex1',
+            prompt: 'Your rook on a2 already guards the 2nd rank. Black to move: checkmate in one.',
+            fen: '8/8/8/4k3/8/1r6/r7/6K1 b - - 0 1',
+            goal: 'mate',
+            solution: ['Rb1#'],
+            hint: 'The wall is in place. Use the other rook to check along the edge.',
+            explanation: '...Rb1# is mate. The rook on a2 stops the king from stepping up to the 2nd rank, and the rook on b1 checks along the 1st rank. The king has nowhere to go.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-mate-ladder-ex2',
+            prompt: 'Climb the ladder. White to move: checkmate in two.',
+            fen: '8/4k3/R7/8/8/8/8/1R4K1 w - - 0 1',
+            goal: 'mate',
+            solution: ['Rb7+', 'Kd8', 'Ra8#'],
+            hint: 'The a6-rook is the wall. Check with the other rook on the 7th rank.',
+            explanation: 'Rb7+ pushes the king to the back rank, because the a6-rook guards the 6th. Then Ra8# finishes: one rook on the 7th rank, the other giving check on the 8th.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-mate-queen',
+      title: 'Queen and king against king',
+      summary: 'Box the king in with your queen, bring your own king, and never forget about stalemate.',
+      estMinutes: 9,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            With a queen and king against a lone king you can **always** force checkmate. But the queen cannot do it alone: you need your king to help at the end.
+
+            ### The plan
+
+            1. **Box the king in.** Use the queen to make the black king's area smaller and smaller. A handy trick is to put your queen a **knight's move** away from the enemy king: then it controls many of the squares around it without giving check.
+            2. **Push it to the edge.** Keep shrinking the box until the king is stuck on the edge of the board.
+            3. **Bring your king.** Once the enemy king is trapped on the edge, march your own king up to help.
+            4. **Checkmate**, with the queen protected by your king or with the king blocking the escape squares.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '6k1/4Q3/8/8/8/4K3/8/8 w - - 0 1',
+          highlights: ['g8', 'h8'],
+          caption: 'The box is complete: the queen on e7 guards the whole 7th rank and f8. The black king can only shuffle between g8 and h8.',
+        },
+        {
+          type: 'line',
+          fen: '6k1/4Q3/8/8/8/4K3/8/8 w - - 0 1',
+          moves: ['Kf4', 'Kh8', 'Kg5', 'Kg8', 'Kg6', 'Kh8', 'Qe8#'],
+          caption: 'The queen keeps the box closed while the king walks up.',
+          notes: {
+            1: 'The queen does not need to move. White simply brings the king closer.',
+            2: 'Black can only shuffle in the corner.',
+            3: 'Closer still.',
+            5: 'The white king arrives. Now it guards g7, h7 and f7.',
+            6: 'Stop and look before you play! 4.Qf7?? would leave Black with no legal moves and NOT in check: stalemate, a draw!',
+            7: 'Checkmate. The queen checks along the 8th rank and the king covers every escape square.',
+          },
+        },
+        {
+          type: 'tip',
+          title: 'Common mistake: stalemate',
+          md: md(`
+            The biggest danger with a queen is **stalemate**: the enemy king is not in check but has no legal move, and the game is a draw. It happens when the queen takes away the last free squares without giving check.
+
+            Before every queen move near a cornered king, ask: **"After my move, does Black still have a move?"** If the answer is "no" and it is not check, find another move!
+          `),
+        },
+        {
+          type: 'board',
+          fen: '7k/5Q2/6K1/8/8/8/8/8 b - - 0 1',
+          highlights: ['h8'],
+          caption: 'Stalemate! Black to move: the king is not in check, but every square around it is covered. White threw away a certain win.',
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-mate-queen-ex1',
+            prompt: 'White to move: checkmate in one. Several queen moves give stalemate instead, so be careful!',
+            fen: '7k/8/5QK1/8/8/8/8/8 w - - 0 1',
+            goal: 'mate',
+            solution: ['Qf8#'],
+            hint: 'Give check along the back rank, or put the queen next to the black king where your king protects her.',
+            explanation: 'Qf8# (or Qd8#, Qe8#, Qg7#) is mate: the queen checks and the white king covers g7 and h7. A move like Qf7?? or Qe6?? would take away the g8-square without giving check: stalemate.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-mate-queen-ex2',
+            prompt: 'The box is closed. White to move: checkmate in two.',
+            fen: '6k1/4Q3/8/5K2/8/8/8/8 w - - 0 1',
+            goal: 'mate',
+            solution: ['Kg6', 'Kh8', 'Qe8#'],
+            hint: 'The queen is already perfectly placed. Bring your king one step closer.',
+            explanation: 'Kg6! brings the king next to the black king\'s escape squares. Black can only play ...Kh8, and then Qe8# (or Qg7# or Qh7#) is mate. The queen does the boxing; the king does the helping.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-mate-rook',
+      title: 'Rook and king against king',
+      summary: 'The box method: the rook builds a box, the king pushes, and the rook mates on the edge.',
+      estMinutes: 10,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            A rook and king can also force checkmate against a lone king. It takes a little longer than with a queen, but the idea is just as clear. We use the **box method**.
+
+            ### The box method
+
+            1. **Build a box.** Use the rook to cut the enemy king off on one part of the board. The rook's rank and file are walls the king cannot cross.
+            2. **Bring your king.** Walk your king towards the enemy king. Protect your rook if the enemy king attacks it, or move it far away along the same line.
+            3. **Shrink the box.** When the kings stand face to face, a rook check pushes the enemy king back one row. Each time the box gets smaller.
+            4. **Mate on the edge.** When the enemy king is on the edge, facing your king, the rook gives check along the edge: checkmate.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '8/8/4k3/7R/4K3/8/8/8 w - - 0 1',
+          arrows: [['h5', 'a5']],
+          highlights: ['e5', 'd5', 'f5'],
+          caption: 'The rook on h5 is a wall along the 5th rank. The kings face each other, so Rh6+ will push the black king back to the 7th rank.',
+        },
+        {
+          type: 'text',
+          md: md(`
+            ### Why the kings must face each other
+
+            When the white king stands directly opposite the black king with one square between them, the black king cannot step forward. A rook check then forces it **backwards**. On the edge of the board there is no "backwards" left, so the check is mate.
+          `),
+        },
+        {
+          type: 'line',
+          fen: '2k5/8/3K4/8/8/8/8/7R w - - 0 1',
+          moves: ['Rh7', 'Kb8', 'Kc6', 'Ka8', 'Kb6', 'Kb8', 'Rh8#'],
+          caption: 'The final phase of the box method.',
+          notes: {
+            1: 'The box: the rook seals off the 7th rank. The black king is stuck on the back rank.',
+            2: 'Black avoids standing opposite the white king.',
+            3: 'The white king follows along the 6th rank.',
+            4: 'Careful here! 3.Kc7?? would be stalemate: Black would have no legal move.',
+            5: 'Now the king stands where it covers a7 and b7, and Black must step in front of it.',
+            6: 'The only move. The kings face each other.',
+            7: 'Checkmate along the back rank.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-mate-rook-ex1',
+            prompt: 'The kings face each other. White to move: checkmate in one.',
+            fen: '3k4/7R/3K4/8/8/8/8/8 w - - 0 1',
+            goal: 'mate',
+            solution: ['Rh8#'],
+            hint: 'The black king is on the edge and cannot step forward. Check it along the edge.',
+            explanation: 'Rh8# is mate. The white king takes away c7, d7 and e7, and the rook checks along the whole 8th rank.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-mate-rook-ex2',
+            prompt: 'The black king is in the corner. White to move: checkmate in one.',
+            fen: '7k/5K2/8/8/8/8/8/6R1 w - - 0 1',
+            goal: 'mate',
+            solution: ['Rh1#'],
+            hint: 'The white king already covers g7 and g8. Which square is left for the black king?',
+            explanation: 'Rh1# is mate. The king on f7 covers g7 and g8, and the rook checks along the h-file, also covering h7.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-mate-rook-ex3',
+            prompt: 'White to move: checkmate in two. First bring your king into position.',
+            fen: '7k/8/5K2/8/8/8/8/R7 w - - 0 1',
+            goal: 'mate',
+            solution: ['Kg6', 'Kg8', 'Ra8#'],
+            hint: 'Put your king where it covers g7 and h7. Then the rook can finish along the back rank.',
+            explanation: 'Kg6! leaves Black only one move, ...Kg8, and now the kings face each other. Ra8# is mate along the back rank.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-mate-backrank',
+      title: 'The back-rank mate',
+      summary: 'A king trapped behind its own pawns can be mated by a single rook or queen.',
+      estMinutes: 8,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            After castling, the king sits safely behind three pawns. But those same pawns can become a **prison**. If a rook or queen reaches the back rank with check, the king cannot step forward because its own pawns are in the way.
+
+            This is the **back-rank mate**, and it decides a huge number of games at every level.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '6k1/5ppp/8/8/8/8/1q3PPP/3R2K1 w - - 0 1',
+          arrows: [['d1', 'd8']],
+          highlights: ['f7', 'g7', 'h7'],
+          caption: 'Black\'s king is boxed in by its own pawns on f7, g7 and h7. Rd8 will be checkmate.',
+        },
+        {
+          type: 'tip',
+          title: 'Give your king some air',
+          md: md(`
+            To protect yourself, make an escape square, called **luft** (German for "air"), with a quiet pawn move such as h3 (or ...h6 for Black) once the opening is over. Also keep a rook or the queen guarding your back rank while the enemy rooks and queen are still on the board.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-mate-backrank-ex1',
+            prompt: 'Black has a queen and you only have a rook, but look at Black\'s king. White to move: checkmate in one.',
+            fen: '6k1/5ppp/8/8/8/8/1q3PPP/3R2K1 w - - 0 1',
+            goal: 'mate',
+            solution: ['Rd8#'],
+            hint: 'The black king cannot step forward. Check it along the back rank.',
+            explanation: 'Rd8# is a back-rank mate. The black king is blocked by its own pawns, and nothing can capture the rook or block the check. Material does not matter when the king is mated!',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-mate-backrank-ex2',
+            prompt: 'Now it is White who forgot to make luft. Black to move: checkmate in one.',
+            fen: '6k1/5ppp/8/3N4/8/8/r4PPP/6K1 b - - 0 1',
+            goal: 'mate',
+            solution: ['Ra1#'],
+            hint: 'Which rook move reaches White\'s back rank with check?',
+            explanation: '...Ra1# is mate. White\'s pawns on f2, g2 and h2 trap the king, and the knight cannot get back to defend the first rank.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-mate-backrank-ex3',
+            prompt: 'Black\'s rook on e8 is defended by the queen. White to move: checkmate in two.',
+            fen: '4r1k1/3q1ppp/8/8/8/8/4QPPP/4R1K1 w - - 0 1',
+            goal: 'mate',
+            solution: ['Qxe8+', 'Qxe8', 'Rxe8#'],
+            hint: 'Your queen and rook are lined up on the e-file. Give up the queen to drag the black queen away.',
+            explanation: 'Qxe8+! forces ...Qxe8, and then Rxe8# is a back-rank mate. Giving up the queen is fine when it leads to checkmate. The black queen was overloaded: it could not guard e8 twice.',
+          },
+        },
+      ],
+    },
+  ],
+}
+
+export const level2: Module[] = [openingModule, safetyModule, matesModule]
