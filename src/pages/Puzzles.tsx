@@ -176,17 +176,17 @@ export default function Puzzles() {
 
   return (
     <div>
-      <PageHeader title="Puzzle trainer" subtitle="Tactics win games. Puzzles adapt to your rating — solve them on the first try to climb.">
-        <div className="text-right">
+      <PageHeader title="Puzzle trainer" subtitle="Tactics win games. Puzzles adapt to your rating — solve them on the first try to climb." subtitleOnPhone={false}>
+        <div className="flex w-full items-baseline justify-between gap-3 md:block md:w-auto md:text-right">
           <p className="text-sm text-muted">Puzzle rating</p>
-          <p className="text-3xl font-bold">
+          <p className="text-2xl font-bold md:text-3xl">
             {progress.puzzle.rating}
             {delta !== null && delta !== 0 && <span className={`ml-2 text-base ${delta > 0 ? 'text-good' : 'text-bad'}`}>{delta > 0 ? `+${delta}` : delta}</span>}
           </p>
         </div>
       </PageHeader>
 
-      <div className="mb-4 flex flex-wrap gap-1.5">
+      <div className="no-scrollbar -mx-4 mb-3 flex gap-1.5 overflow-x-auto px-4 md:mx-0 md:mb-4 md:flex-wrap md:px-0">
         <ThemeChip active={theme === null} onClick={() => setTheme(null)}>
           🎯 Rated mix
         </ThemeChip>
@@ -290,7 +290,7 @@ export default function Puzzles() {
 
 function ThemeChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button onClick={onClick} className={`rounded-full border px-3 py-1 text-sm transition ${active ? 'border-accent bg-accent/20 text-accent' : 'border-line text-muted hover:text-ink'}`}>
+    <button onClick={onClick} className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1 text-sm transition ${active ? 'border-accent bg-accent/20 text-accent' : 'border-line text-muted hover:text-ink'}`}>
       {children}
     </button>
   )

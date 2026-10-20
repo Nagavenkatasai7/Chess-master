@@ -20,6 +20,8 @@ html,
 body {
   background: var(--color-bg);
   color: var(--color-ink);
+  /* No rubber-band scrolling of the whole app past its edges. */
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -29,6 +31,51 @@ body {
   /* No double-tap zoom delay on phones. */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* App chrome (bars, tabs) behaves like native UI: no text selection or long-press callouts. */
+.chrome,
+.chrome * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* iOS zooms into inputs smaller than 16px; keep form fields at 16px on phones. */
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Screen transition, like pushing a view on a native navigation stack. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.page-enter {
+  animation: page-enter 180ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
+}
+
+/* Horizontal chip rows that scroll without a visible scrollbar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* Lesson prose rendered by the mini markdown component. */

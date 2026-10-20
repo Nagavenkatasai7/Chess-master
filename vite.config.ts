@@ -35,6 +35,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,wasm,json}'],
+        // Launch screens are read by iOS at install time; no need to cache them offline.
+        globIgnores: ['splash/**'],
         // The Stockfish WASM binary is ~1.8 MB.
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         navigateFallback: 'index.html',

@@ -6,6 +6,7 @@ import { Button, Card } from '../components/ui'
 import { allLessons, findLesson } from '../data/curriculum/index'
 import { LEVELS, type LessonBlock } from '../data/types'
 import { Markdown } from '../lib/markdown'
+import { usePageTitle } from '../lib/shell'
 import { updateProgress, useProgress } from '../lib/storage'
 
 export default function LessonPage() {
@@ -13,6 +14,7 @@ export default function LessonPage() {
   const navigate = useNavigate()
   const progress = useProgress()
   const entry = findLesson(lessonId)
+  usePageTitle(entry?.lesson.title ?? null)
 
   if (!entry) {
     return (
@@ -47,10 +49,13 @@ export default function LessonPage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Link to={`/learn#level-${module.level}`} className="text-sm text-muted hover:text-ink">
+      <Link to={`/learn#level-${module.level}`} className="hidden text-sm text-muted hover:text-ink md:inline">
         ← Level {module.level}: {LEVELS[module.level - 1].name} · {module.title}
       </Link>
-      <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">{lesson.title}</h1>
+      <p className="text-xs font-semibold uppercase tracking-wider text-accent md:hidden">
+        Level {module.level} · {module.title}
+      </p>
+      <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl md:mt-2">{lesson.title}</h1>
       <p className="mt-1 text-muted">
         {lesson.summary} · {lesson.estMinutes} min
       </p>

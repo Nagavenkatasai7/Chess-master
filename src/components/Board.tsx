@@ -1,9 +1,11 @@
 // Interactive chessboard: drag-and-drop or click-to-move, legal-move dots,
 // last-move and check highlights, arrows, "star" targets and a promotion picker.
 import { Chess, type Square } from 'chess.js'
-import { useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { Chessboard, defaultPieces, type Arrow } from 'react-chessboard'
 import { kingSquare, type MoveInput } from '../lib/chess'
+import { haptic } from '../lib/haptics'
+import { playSound } from '../lib/sound'
 import { useSettings, type Settings } from '../lib/storage'
 
 export interface BoardArrow {
@@ -66,6 +68,20 @@ export default function Board({
   const [promotion, setPromotion] = useState<{ from: string; to: string; color: 'w' | 'b' } | null>(null)
   const chess = useMemo(() => loadChess(fen, skipValidation), [fen, skipValidation])
 
+  // Play a move/capture/check sound whenever a move lands on this board.
+  const previous = useRef(fen)
+  useEffect(() => {
+    const before = previous.current.split(' ')[0]
+    const after = fen.split(' ')[0]
+    previous.current = fen
+    if (before === after || !lastMove || !chess) return
+    const count = (placement: string) => placement.replace(/[^a-zA-Z]/g, '').length
+    if (chess.isCheckmate()) playSound('mate')
+    else if (!skipValidation && chess.isCheck()) playSound('check')
+    else if (count(after) < count(before)) playSound('capture')
+    else playSound('move')
+  }, [fen, lastMove, chess, skipValidation])
+
   const canMoveColor = (color: 'w' | 'b') => {
     if (!movable || !chess) return false
     if (movable === 'both') return chess.turn() === color
@@ -88,7 +104,14 @@ export default function Board({
       setPromotion({ from, to, color: piece.color })
       return true
     }
-    return onMove({ from, to })
+    return submit({ from, to })
+  }
+
+  const submit = (move: MoveInput): boolean => {
+    const accepted = onMove?.(move) ?? false
+    haptic(accepted ? 'tap' : 'error')
+    if (!accepted) playSound('error')
+    return accepted
   }
 
   const onSquareClick = ({ square, piece }: { square: string; piece: { pieceType: string } | null }) => {
@@ -175,7 +198,7 @@ export default function Board({
                     onClick={() => {
                       const move = { from: promotion.from, to: promotion.to, promotion: p }
                       setPromotion(null)
-                      onMove?.(move)
+                      submit(move)
                     }}
                   >
                     {defaultPieces[key]?.()}

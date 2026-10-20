@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import InstallPrompt from '../components/InstallPrompt'
+import { BookIcon, KnightIcon, LearnIcon, PuzzleIcon } from '../components/icons'
 import { Card, ProgressBar } from '../components/ui'
 import { allLessons } from '../data/curriculum/index'
 import { LEVELS } from '../data/types'
@@ -32,14 +33,28 @@ export default function Home() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{settings.playerName ? `Welcome back, ${settings.playerName}` : 'Your road to grandmaster'}</h1>
-        <p className="mt-1 text-muted">Learn the ideas, train tactics every day, play, review — repeat. Every grandmaster started exactly where you are.</p>
+        <h1 className="text-xl font-bold tracking-tight sm:text-3xl">{settings.playerName ? `Welcome back, ${settings.playerName}` : 'Your road to grandmaster'}</h1>
+        <p className="mt-1 hidden text-muted sm:block">Learn the ideas, train tactics every day, play, review — repeat. Every grandmaster started exactly where you are.</p>
+      </div>
+
+      {/* Phone quick actions, like an app's home screen. */}
+      <div className="grid grid-cols-2 gap-3 md:hidden">
+        <Tile
+          to={nextLesson ? `/learn/${nextLesson.lesson.id}` : '/learn'}
+          Icon={LearnIcon}
+          tint="#f0a83a"
+          title={isNew ? 'Start lesson 1' : 'Continue'}
+          text={nextLesson?.lesson.title ?? 'All lessons done!'}
+        />
+        <Tile to="/puzzles" Icon={PuzzleIcon} tint="#5aa7e0" title="Puzzles" text={`Rating ${progress.puzzle.rating}`} />
+        <Tile to="/play" Icon={KnightIcon} tint="#5fb85f" title="Play" text={`${wins}W ${draws}D ${losses}L`} />
+        <Tile to="/openings" Icon={BookIcon} tint="#b07fd8" title="Openings" text={`${Object.keys(progress.drills).length} lines drilled`} />
       </div>
 
       <InstallPrompt />
 
       {isNew && (
-        <Card className="border-accent/50 bg-gradient-to-br from-accent/15 to-transparent">
+        <Card className="hidden border-accent/50 bg-gradient-to-br from-accent/15 to-transparent md:block">
           <p className="text-lg font-semibold">👋 New to chess? Start here.</p>
           <p className="mt-1 text-muted">
             Your first lesson teaches the board and how each piece moves with quick interactive challenges. No experience needed.
@@ -173,6 +188,20 @@ export default function Home() {
         <QuickLink to="/settings" icon="🤖" title="AI coach setup" text="Connect a free OpenRouter model for plain-English explanations." />
       </div>
     </div>
+  )
+}
+
+function Tile({ to, Icon, tint, title, text }: { to: string; Icon: (p: { size?: number }) => React.JSX.Element; tint: string; title: string; text: string }) {
+  return (
+    <Link to={to} className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4 transition active:scale-[0.98]">
+      <span className="flex h-10 w-10 items-center justify-center rounded-xl text-white" style={{ background: tint }}>
+        <Icon size={22} />
+      </span>
+      <span>
+        <span className="block font-semibold">{title}</span>
+        <span className="block truncate text-xs text-muted">{text}</span>
+      </span>
+    </Link>
   )
 }
 

@@ -4,6 +4,7 @@ import OpeningDrill from '../components/OpeningDrill'
 import { Badge, Button, Card } from '../components/ui'
 import { openings } from '../data/openings/index'
 import { drillKey, mastery, recordDrill } from '../lib/drills'
+import { usePageTitle } from '../lib/shell'
 import { useProgress } from '../lib/storage'
 
 export default function OpeningPage() {
@@ -11,6 +12,7 @@ export default function OpeningPage() {
   const [params, setParams] = useSearchParams()
   const progress = useProgress()
   const opening = openings.find((o) => o.id === openingId)
+  usePageTitle(opening?.name ?? null)
 
   if (!opening) {
     return (
@@ -30,7 +32,7 @@ export default function OpeningPage() {
 
   return (
     <div>
-      <Link to="/openings" className="text-sm text-muted hover:text-ink">
+      <Link to="/openings" className="hidden text-sm text-muted hover:text-ink md:inline">
         ← All openings
       </Link>
       <div className="mt-2 flex flex-wrap items-end justify-between gap-3">

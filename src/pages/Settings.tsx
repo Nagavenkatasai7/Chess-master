@@ -212,7 +212,7 @@ export default function Settings() {
       </Card>
 
       <Card>
-        <h2 className="text-lg font-semibold">♟️ Board</h2>
+        <h2 className="text-lg font-semibold">♟️ Board &amp; feel</h2>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {THEMES.map((t) => (
             <button
@@ -232,6 +232,14 @@ export default function Settings() {
         <label className="mt-4 flex items-center gap-2 text-sm">
           <input type="checkbox" checked={settings.showCoordinates} onChange={(e) => updateSettings({ showCoordinates: e.target.checked })} className="accent-[var(--color-accent)]" />
           Show coordinates (a–h, 1–8) on the board
+        </label>
+        <label className="mt-3 flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={settings.sound} onChange={(e) => updateSettings({ sound: e.target.checked })} className="accent-[var(--color-accent)]" />
+          Move sounds
+        </label>
+        <label className="mt-3 flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={settings.haptics} onChange={(e) => updateSettings({ haptics: e.target.checked })} className="accent-[var(--color-accent)]" />
+          Vibrate when you move (haptics)
         </label>
         <label className="mt-4 block text-sm font-semibold" htmlFor="name">
           Your name

@@ -10,6 +10,7 @@ A web app that teaches chess from your very first move to grandmaster-level unde
 - **Analysis board**: explore any position, or paste a FEN/PGN, with live Stockfish lines.
 - **AI coach**: ask questions in plain English ("why was this a blunder?", "what's the plan here?"). It uses a **free** model on OpenRouter, and each question includes Stockfish's analysis so the explanations rest on accurate chess.
 - **Progress**: rank ladder (Newcomer → Grandmaster), strength estimate, daily training plan, streaks, export/import.
+- **Installs like a real app**: add it to your iPhone home screen (Safari → Share → Add to Home Screen) or install it from Chrome/Edge. It runs full screen and works offline. On phones you get native-style tab and title bars, a full-screen game mode with a bottom toolbar, swipe-back, launch screens, move sounds and haptics.
 
 Everything runs in the browser. Stockfish 19 runs locally as WebAssembly, and progress is saved in `localStorage`.
 

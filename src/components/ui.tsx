@@ -17,7 +17,7 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) {
   return (
     <button
-      className={`inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm transition disabled:cursor-not-allowed disabled:opacity-45 ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex select-none items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-45 ${VARIANTS[variant]} ${className}`}
       {...props}
     />
   )
@@ -43,12 +43,13 @@ export function ProgressBar({ value, className = '', color = 'var(--color-accent
   )
 }
 
-export function PageHeader({ title, subtitle, children }: { title: string; subtitle?: string; children?: ReactNode }) {
+export function PageHeader({ title, subtitle, children, subtitleOnPhone = true }: { title: string; subtitle?: string; children?: ReactNode; subtitleOnPhone?: boolean }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-4 flex flex-wrap items-end justify-between gap-3 md:mb-6 md:gap-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{title}</h1>
-        {subtitle && <p className="mt-1 max-w-2xl text-muted">{subtitle}</p>}
+        {/* On phones the top bar already shows the title. */}
+        <h1 className="hidden text-3xl font-bold tracking-tight md:block">{title}</h1>
+        {subtitle && <p className={`max-w-2xl text-sm text-muted md:mt-1 md:block md:text-base ${subtitleOnPhone ? '' : 'hidden'}`}>{subtitle}</p>}
       </div>
       {children}
     </div>

@@ -50,6 +50,8 @@ export interface Settings {
   coachEffort: CoachEffort
   boardTheme: 'green' | 'brown' | 'blue' | 'purple'
   showCoordinates: boolean
+  sound: boolean
+  haptics: boolean
   playerName: string
 }
 
@@ -82,6 +84,8 @@ const defaultSettings: Settings = {
   coachEffort: 'low',
   boardTheme: 'green',
   showCoordinates: true,
+  sound: true,
+  haptics: true,
   playerName: '',
 }
 

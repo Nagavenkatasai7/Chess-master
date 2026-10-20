@@ -1,14 +1,16 @@
 import { Chess } from 'chess.js'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Board from '../components/Board'
 import CoachPanel from '../components/CoachPanel'
 import EvalBar from '../components/EvalBar'
 import GameReview from '../components/GameReview'
+import { BulbIcon, ChartIcon, ChatIcon, FlagIcon, FlipIcon, HandshakeIcon, UndoIcon } from '../components/icons'
 import MoveList from '../components/MoveList'
 import { Button, Card, Notice, PageHeader } from '../components/ui'
 import { botMove, BOTS, type Bot } from '../lib/bots'
 import { gameOverReason, material, parseUci, START_FEN, whiteScore, winPercent, type MoveInput } from '../lib/chess'
 import { getAnalysisEngine, getPlayEngine, type Score } from '../lib/engine'
+import { useImmersive } from '../lib/shell'
 import { updateProgress, useProgress } from '../lib/storage'
 
 interface GameSetup {
@@ -148,6 +150,8 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
   const recorded = useRef(false)
   const gameId = useRef(String(setup.id))
   const evalCache = useRef(new Map<string, Promise<Score | null>>())
+
+  useImmersive(phase === 'playing')
 
   const fen = moves.length ? moves[moves.length - 1].fen : startFen
   const chess = useMemo(() => new Chess(fen), [fen])
@@ -348,10 +352,10 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
     const isBot = side !== color
     const diff = side === 'w' ? captured.white : captured.black
     return (
-      <div className="flex items-center justify-between rounded-lg bg-panel px-3 py-2">
+      <div className="flex items-center justify-between rounded-lg bg-panel px-3 py-1.5 md:py-2">
         <div className="flex items-center gap-2">
-          <span className="text-xl">{isBot ? bot.avatar : '🧑'}</span>
-          <span className="font-semibold">{isBot ? `${bot.name} (${bot.elo})` : 'You'}</span>
+          <span className="text-lg md:text-xl">{isBot ? bot.avatar : '🧑'}</span>
+          <span className="text-sm font-semibold md:text-base">{isBot ? `${bot.name} (${bot.elo})` : 'You'}</span>
           {isBot && thinking && <span className="animate-pulse text-xs text-muted">thinking…</span>}
         </div>
         {diff > 0 && <span className="text-sm text-muted">+{diff}</span>}
@@ -359,10 +363,12 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
     )
   }
   const top = orientation === 'white' ? 'b' : 'w'
+  const flip = () => setOrientation((o) => (o === 'white' ? 'black' : 'white'))
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,600px)_1fr]">
-      <div className="space-y-2">
+    <div className="grid gap-4 md:gap-6 lg:grid-cols-[minmax(0,600px)_1fr]">
+      <div className="space-y-1.5 md:space-y-2">
+        <MoveStrip sans={sans} startFen={startFen} />
         {player(top)}
         <div className="flex gap-2">
           {showEval && <EvalBar score={evalScore} orientation={orientation} />}
@@ -409,7 +415,7 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
         {notice && phase === 'playing' && <Notice>{notice}</Notice>}
 
         {phase === 'playing' && (
-          <Card className="p-4">
+          <Card className="hidden p-4 md:block">
             <p className="mb-3 text-sm text-muted">{turn === color ? 'Your move.' : `${bot.name} is thinking…`}</p>
             <div className="flex flex-wrap gap-2">
               <Button onClick={hint} disabled={turn !== color || !!warning}>
@@ -418,7 +424,7 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
               <Button onClick={takeBack} disabled={!moves.length || warning === 'checking'}>
                 ↶ Takeback
               </Button>
-              <Button onClick={() => setOrientation((o) => (o === 'white' ? 'black' : 'white'))}>⇅ Flip</Button>
+              <Button onClick={flip}>⇅ Flip</Button>
               <Button onClick={() => setShowEval((s) => !s)}>{showEval ? 'Hide eval' : 'Show eval'}</Button>
               <Button onClick={offerDraw}>½ Draw</Button>
               <Button variant="danger" onClick={resign}>
@@ -428,20 +434,28 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
           </Card>
         )}
 
-        <Card className="max-h-72 overflow-y-auto p-3">
+        <Card className="hidden max-h-72 overflow-y-auto p-3 md:block">
           {moves.length ? (
             <MoveList moves={sans} current={moves.length - 1} startMoveNumber={Number(startFen.split(' ')[5]) || 1} blackFirst={startFen.split(' ')[1] === 'b'} />
           ) : (
             <p className="text-sm text-muted">{color === 'w' ? 'You have White — make the first move. Tip: start with a centre pawn (e4 or d4).' : `${bot.name} has White and moves first.`}</p>
           )}
         </Card>
+        {!moves.length && (
+          <p className="text-center text-sm text-muted md:hidden">
+            {color === 'w' ? 'You have White: make the first move. Tip: start with a centre pawn (e4 or d4).' : `${bot.name} has White and moves first.`}
+          </p>
+        )}
 
         <div>
-          <Button variant="ghost" onClick={() => setShowCoach((s) => !s)}>
-            🤖 {showCoach ? 'Hide coach' : 'Ask the coach about this position'}
-          </Button>
+          {/* Phones use the Coach button in the game toolbar instead. */}
+          <div className="hidden md:block">
+            <Button variant="ghost" onClick={() => setShowCoach((s) => !s)}>
+              🤖 {showCoach ? 'Hide coach' : 'Ask the coach about this position'}
+            </Button>
+          </div>
           {showCoach && (
-            <div className="mt-2">
+            <div className="md:mt-2">
               <CoachPanel
                 compact
                 context={() => ({
@@ -456,6 +470,88 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
           )}
         </div>
       </div>
+
+      {/* Phone game toolbar, in place of the tab bar while a game is on. */}
+      {phase === 'playing' && (
+        <nav className="chrome fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-line/70 bg-panel/90 pb-[calc(env(safe-area-inset-bottom)+0.25rem)] pt-1.5 backdrop-blur-xl md:hidden">
+          <ToolButton label="Hint" onClick={hint} disabled={turn !== color || !!warning}>
+            <BulbIcon />
+          </ToolButton>
+          <ToolButton label="Undo" onClick={takeBack} disabled={!moves.length || warning === 'checking'}>
+            <UndoIcon />
+          </ToolButton>
+          <ToolButton label="Flip" onClick={flip}>
+            <FlipIcon />
+          </ToolButton>
+          <ToolButton label="Eval" onClick={() => setShowEval((s) => !s)} active={showEval}>
+            <ChartIcon />
+          </ToolButton>
+          <ToolButton label="Coach" onClick={() => setShowCoach((s) => !s)} active={showCoach}>
+            <ChatIcon />
+          </ToolButton>
+          <ToolButton label="Draw" onClick={offerDraw}>
+            <HandshakeIcon />
+          </ToolButton>
+          <ToolButton label="Resign" onClick={() => window.confirm('Resign this game?') && resign()} danger>
+            <FlagIcon />
+          </ToolButton>
+        </nav>
+      )}
+    </div>
+  )
+}
+
+function ToolButton({
+  label,
+  onClick,
+  disabled,
+  active,
+  danger,
+  children,
+}: {
+  label: string
+  onClick: () => void
+  disabled?: boolean
+  active?: boolean
+  danger?: boolean
+  children: ReactNode
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`flex min-w-[2.75rem] flex-col items-center gap-0.5 rounded-lg px-1 py-0.5 text-[10.5px] font-medium transition active:scale-95 disabled:opacity-35 ${
+        active ? 'text-accent' : danger ? 'text-bad' : 'text-muted'
+      }`}
+    >
+      {children}
+      {label}
+    </button>
+  )
+}
+
+/** Phone move list: one swipeable row that follows the latest move. */
+function MoveStrip({ sans, startFen }: { sans: string[]; startFen: string }) {
+  const strip = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    strip.current?.scrollTo({ left: strip.current.scrollWidth, behavior: 'smooth' })
+  }, [sans.length])
+  if (!sans.length) return null
+  const startNo = Number(startFen.split(' ')[5]) || 1
+  const offset = startFen.split(' ')[1] === 'b' ? 1 : 0
+  return (
+    <div ref={strip} className="no-scrollbar flex gap-1 overflow-x-auto whitespace-nowrap px-1 font-mono text-[13px] md:hidden">
+      {sans.map((san, i) => {
+        const white = (i + offset) % 2 === 0
+        const no = startNo + Math.floor((i + offset) / 2)
+        const last = i === sans.length - 1
+        return (
+          <span key={i} className={`rounded px-1.5 py-0.5 ${last ? 'bg-accent/25 text-ink' : 'text-muted'}`}>
+            {white ? `${no}.` : i === 0 ? `${no}…` : ''}
+            {san}
+          </span>
+        )
+      })}
     </div>
   )
 }
