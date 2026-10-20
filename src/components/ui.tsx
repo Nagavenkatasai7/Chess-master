@@ -1,0 +1,62 @@
+// Small shared UI primitives.
+import type { ButtonHTMLAttributes, ReactNode } from 'react'
+
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
+
+const VARIANTS: Record<Variant, string> = {
+  primary: 'bg-accent text-accent-ink hover:brightness-110 font-semibold',
+  secondary: 'bg-panel-2 text-ink hover:bg-line',
+  ghost: 'text-muted hover:text-ink hover:bg-panel-2',
+  danger: 'bg-bad/90 text-white hover:bg-bad',
+}
+
+export function Button({
+  variant = 'secondary',
+  className = '',
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) {
+  return (
+    <button
+      className={`inline-flex select-none items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-45 ${VARIANTS[variant]} ${className}`}
+      {...props}
+    />
+  )
+}
+
+export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return <div className={`rounded-2xl border border-line bg-panel p-5 ${className}`}>{children}</div>
+}
+
+export function Badge({ children, color = 'var(--color-panel-2)', className = '' }: { children: ReactNode; color?: string; className?: string }) {
+  return (
+    <span className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium ${className}`} style={{ background: color }}>
+      {children}
+    </span>
+  )
+}
+
+export function ProgressBar({ value, className = '', color = 'var(--color-accent)' }: { value: number; className?: string; color?: string }) {
+  return (
+    <div className={`h-2 w-full overflow-hidden rounded-full bg-panel-2 ${className}`}>
+      <div className="h-full rounded-full transition-all" style={{ width: `${Math.round(Math.max(0, Math.min(1, value)) * 100)}%`, background: color }} />
+    </div>
+  )
+}
+
+export function PageHeader({ title, subtitle, children, subtitleOnPhone = true }: { title: string; subtitle?: string; children?: ReactNode; subtitleOnPhone?: boolean }) {
+  return (
+    <div className="mb-4 flex flex-wrap items-end justify-between gap-3 md:mb-6 md:gap-4">
+      <div>
+        {/* On phones the top bar already shows the title. */}
+        <h1 className="hidden text-3xl font-bold tracking-tight md:block">{title}</h1>
+        {subtitle && <p className={`max-w-2xl text-sm text-muted md:mt-1 md:block md:text-base ${subtitleOnPhone ? '' : 'hidden'}`}>{subtitle}</p>}
+      </div>
+      {children}
+    </div>
+  )
+}
+
+export function Notice({ kind = 'info', children }: { kind?: 'info' | 'good' | 'bad' | 'warn'; children: ReactNode }) {
+  const colors = { info: 'border-info/50 bg-info/10', good: 'border-good/50 bg-good/10', bad: 'border-bad/50 bg-bad/10', warn: 'border-warn/50 bg-warn/10' }
+  return <div className={`rounded-xl border px-4 py-3 text-sm ${colors[kind]}`}>{children}</div>
+}

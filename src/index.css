@@ -1,111 +1,117 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import "tailwindcss";
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+@theme {
+  --color-bg: #12100e;
+  --color-panel: #1e1b18;
+  --color-panel-2: #2a2622;
+  --color-line: #3a342e;
+  --color-ink: #ece7e1;
+  --color-muted: #a39b91;
+  --color-accent: #f0a83a;
+  --color-accent-ink: #1a1206;
+  --color-good: #5fb85f;
+  --color-warn: #e8b13a;
+  --color-bad: #e2574c;
+  --color-info: #5aa7e0;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  /* No rubber-band scrolling of the whole app past its edges. */
+  overscroll-behavior-y: none;
 }
 
 body {
   margin: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  /* No double-tap zoom delay on phones. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+/* App chrome (bars, tabs) behaves like native UI: no text selection or long-press callouts. */
+.chrome,
+.chrome * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+/* iOS zooms into inputs smaller than 16px; keep form fields at 16px on phones. */
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+/* Screen transition, like pushing a view on a native navigation stack. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
-p {
-  margin: 0;
+.page-enter {
+  animation: page-enter 180ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
+/* Horizontal chip rows that scroll without a visible scrollbar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Lesson prose rendered by the mini markdown component. */
+.prose-chess p {
+  margin: 0 0 0.75rem;
+  line-height: 1.65;
+}
+.prose-chess ul,
+.prose-chess ol {
+  margin: 0 0 0.75rem 1.25rem;
+  line-height: 1.6;
+}
+.prose-chess ul {
+  list-style: disc;
+}
+.prose-chess ol {
+  list-style: decimal;
+}
+.prose-chess li {
+  margin: 0.2rem 0;
+}
+.prose-chess h3 {
+  font-size: 1.1rem;
+  font-weight: 650;
+  margin: 1.1rem 0 0.5rem;
+  color: var(--color-accent);
+}
+.prose-chess code {
+  background: var(--color-panel-2);
   border-radius: 4px;
-  color: var(--text-h);
+  padding: 0.05rem 0.35rem;
+  font-size: 0.9em;
 }
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+.prose-chess strong {
+  color: #fff;
+}
+.prose-chess > :last-child {
+  margin-bottom: 0;
 }
