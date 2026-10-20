@@ -35,7 +35,7 @@ export default function GameReview({
   useEffect(() => {
     let cancelled = false
     setEvals(null)
-    analyseGame(getAnalysisEngine(), startFen, sans, 12, (d) => !cancelled && setDone(d)).then((result) => {
+    analyseGame(getAnalysisEngine(), startFen, sans, 12, (d) => !cancelled && setDone(d), () => cancelled).then((result) => {
       if (cancelled) return
       setEvals(result)
       setPly(0)

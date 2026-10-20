@@ -77,3 +77,26 @@ describe('shared coach proxy', () => {
     expect(requests).toEqual([{ url: '/api/chat', auth: undefined, model: storage.DEFAULT_MODEL }])
   })
 })
+
+describe('stream errors', () => {
+  it('falls back to the next free model when a 200 stream reports an error before any text', async () => {
+    vi.stubGlobal('window', { location: { origin: 'http://localhost' } })
+    updateSettings({ apiKey: 'sk-or-test', model: DEFAULT_MODEL })
+    const calls: string[] = []
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string, init?: RequestInit) => {
+        if (url.endsWith('/models')) return new Response(JSON.stringify(MODELS))
+        const model = JSON.parse(String(init?.body)).model as string
+        calls.push(model)
+        if (model === DEFAULT_MODEL) return new Response(': processing\n\ndata: {"error":{"message":"Provider returned 429"}}\n\n', { status: 200 })
+        return sse(['Fallback ', 'answer'])
+      }),
+    )
+    let text = ''
+    const { model } = await streamChat([{ role: 'user', content: 'tip?' }], (t) => (text += t))
+    expect(calls).toEqual([DEFAULT_MODEL, 'other/free-model:free'])
+    expect(model).toBe('other/free-model:free')
+    expect(text).toBe('Fallback answer')
+  })
+})

@@ -17,8 +17,8 @@ export default function OpeningDrill({ opening, line, onComplete }: { opening: O
   const [message, setMessage] = useState<{ kind: 'good' | 'bad' | 'info'; text: string } | null>(null)
   const [done, setDone] = useState(false)
   const timer = useRef<number | undefined>(undefined)
-  const fen = ply === 0 ? START_FEN : steps[ply - 1].fen
-  const last = ply === 0 ? null : steps[ply - 1]
+  const last = ply === 0 ? null : (steps[ply - 1] ?? null)
+  const fen = last?.fen ?? START_FEN
   const isLearnerTurn = !done && ply < steps.length && fen.split(' ')[1] === learner
 
   const restart = () => {

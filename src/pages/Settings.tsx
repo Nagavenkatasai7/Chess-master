@@ -56,14 +56,27 @@ export default function Settings() {
     }
   }
 
-  const exportData = () => {
-    const blob = new Blob([exportProgress()], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
+  const exportData = async () => {
+    const name = `chess-master-progress-${new Date().toISOString().slice(0, 10)}.json`
+    const file = new File([exportProgress()], name, { type: 'application/json' })
+    // iPhone/iPad: the share sheet offers "Save to Files", which works where blob downloads don't.
+    if (navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: 'Chess Master progress' })
+        return
+      } catch (e) {
+        if ((e as Error).name === 'AbortError') return
+      }
+    }
+    const url = URL.createObjectURL(file)
     const a = document.createElement('a')
     a.href = url
-    a.download = `chess-master-progress-${new Date().toISOString().slice(0, 10)}.json`
+    a.download = name
+    document.body.appendChild(a)
     a.click()
-    URL.revokeObjectURL(url)
+    a.remove()
+    // Safari needs the URL to stay valid until the download has started.
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
   }
 
   const importData = async (file: File) => {

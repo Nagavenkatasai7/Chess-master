@@ -1,10 +1,11 @@
 // Runs a lesson exercise: find-the-move lines, mates, "collect the stars" and
 // "capture everything" piece-movement drills.
 import { Chess } from 'chess.js'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Exercise } from '../data/types'
 import { moveToUci, sanToUci, tryMove, type MoveInput } from '../lib/chess'
 import { Markdown } from '../lib/markdown'
+import { useTimers } from '../lib/useTimers'
 import Board from './Board'
 import CoachPanel from './CoachPanel'
 import { Button } from './ui'
@@ -39,10 +40,10 @@ export default function ExerciseBoard({ exercise, onSolved, solvedBefore }: { ex
   const [showHint, setShowHint] = useState(false)
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null)
   const [showCoach, setShowCoach] = useState(false)
-  const timer = useRef<number | undefined>(undefined)
+  const timers = useTimers()
 
   const reset = () => {
-    window.clearTimeout(timer.current)
+    timers.clear()
     setFen(exercise.fen)
     setStep(0)
     setMoves(0)
@@ -55,7 +56,6 @@ export default function ExerciseBoard({ exercise, onSolved, solvedBefore }: { ex
 
   useEffect(() => {
     reset()
-    return () => window.clearTimeout(timer.current)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exercise.id])
 
@@ -115,7 +115,7 @@ export default function ExerciseBoard({ exercise, onSolved, solvedBefore }: { ex
     setMessage({ kind: 'good', text: `${result.move.san} — good! Keep going…` })
     const reply = solution[step + 1]
     const afterFen = result.chess.fen()
-    timer.current = window.setTimeout(() => {
+    timers.schedule(() => {
       const r = tryMove(afterFen, reply)
       if (!r) return
       setFen(r.chess.fen())
@@ -132,7 +132,7 @@ export default function ExerciseBoard({ exercise, onSolved, solvedBefore }: { ex
     const solution = exercise.solution ?? []
     let current = exercise.fen
     solution.forEach((san, i) => {
-      timer.current = window.setTimeout(() => {
+      timers.schedule(() => {
         const r = tryMove(current, san)
         if (!r) return
         current = r.chess.fen()

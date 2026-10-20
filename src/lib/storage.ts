@@ -110,6 +110,18 @@ function write(key: string, value: unknown) {
 function createStore<T>(key: string, fallback: () => T) {
   let state = read(key, fallback)
   const listeners = new Set<() => void>()
+  // Another tab or window saved: adopt its state so our next write doesn't overwrite it.
+  if (typeof window !== 'undefined') {
+    window.addEventListener('storage', (e) => {
+      if (e.key !== key || e.newValue === null) return
+      try {
+        state = { ...fallback(), ...JSON.parse(e.newValue) }
+        listeners.forEach((l) => l())
+      } catch {
+        // Ignore a corrupt value written elsewhere.
+      }
+    })
+  }
   return {
     get: () => state,
     set(next: T) {

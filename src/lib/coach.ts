@@ -1,5 +1,6 @@
 // Builds the grounded context the AI coach receives with every question.
-import { describePosition, formatLine, formatScore, pvToSan, whiteScore } from './chess'
+import { Chess } from 'chess.js'
+import { describePosition, formatLine, formatScore, gameOverReason, pvToSan, whiteScore } from './chess'
 import { getAnalysisEngine, type EngineLine } from './engine'
 
 export interface CoachContext {
@@ -15,7 +16,10 @@ export interface CoachContext {
 
 export function engineSummary(fen: string, lines: EngineLine[]): string {
   const turn = fen.split(' ')[1] as 'w' | 'b'
-  if (!lines.length) return 'Engine: no legal moves (game over).'
+  if (!lines.length) {
+    const over = gameOverReason(new Chess(fen))
+    return over ? `Engine: the game is over (${over}).` : 'Engine analysis unavailable for this position.'
+  }
   return lines
     .map((l, i) => {
       const sans = pvToSan(fen, l.pv, 8)
@@ -28,7 +32,10 @@ export function engineSummary(fen: string, lines: EngineLine[]): string {
 export async function buildCoachPrompt(ctx: CoachContext, question: string, studentRating: number): Promise<string> {
   let engineText = 'Engine analysis unavailable.'
   try {
-    const result = await getAnalysisEngine().analyse(ctx.fen, { depth: 14, multipv: 3, interrupt: true })
+    const engine = getAnalysisEngine()
+    let result = await engine.analyse(ctx.fen, { depth: 14, multipv: 3, interrupt: true })
+    // A newer interrupting search can skip ours; queue it again rather than send no analysis.
+    if (!result.lines.length && !new Chess(ctx.fen).isGameOver()) result = await engine.analyse(ctx.fen, { depth: 12, multipv: 3 })
     engineText = engineSummary(ctx.fen, result.lines)
   } catch {
     // Coach can still answer from the position alone.

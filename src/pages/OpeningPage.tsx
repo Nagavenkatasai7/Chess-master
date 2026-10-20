@@ -96,7 +96,7 @@ export default function OpeningPage() {
         {mode === 'learn' ? (
           <LineViewer key={lineIndex} moves={line.moves} notes={line.notes} orientation={opening.side} />
         ) : (
-          <OpeningDrill opening={opening} line={line} onComplete={(perfect) => recordDrill(drillKey(opening.id, lineIndex), perfect)} />
+          <OpeningDrill key={`${opening.id}-${lineIndex}`} opening={opening} line={line} onComplete={(perfect) => recordDrill(drillKey(opening.id, lineIndex), perfect)} />
         )}
       </Card>
     </div>

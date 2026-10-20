@@ -154,8 +154,15 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
   useImmersive(phase === 'playing')
 
   const fen = moves.length ? moves[moves.length - 1].fen : startFen
-  const chess = useMemo(() => new Chess(fen), [fen])
+  // Replayed from the start (not loaded from a FEN) so chess.js knows the move
+  // history and can detect threefold repetition.
+  const chess = useMemo(() => {
+    const game = new Chess(startFen)
+    for (const m of moves) game.move(m.san)
+    return game
+  }, [moves, startFen])
   const turn = chess.turn()
+  const over = chess.isGameOver()
   const sans = useMemo(() => moves.map((m) => m.san), [moves])
   const last = moves[moves.length - 1]
 
@@ -233,14 +240,17 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
 
   // The bot moves when it is its turn (and no blunder alert is waiting).
   useEffect(() => {
-    if (phase !== 'playing' || turn === color || warning) return
+    if (phase !== 'playing' || over || turn === color || warning) return
     let live = true
+    let timer: number | undefined
     setThinking(true)
     const started = Date.now()
     botMove(getPlayEngine(), bot, fen).then((uci) => {
       const delay = Math.max(0, 450 - (Date.now() - started))
-      window.setTimeout(() => {
-        if (!live || !uci) return
+      timer = window.setTimeout(() => {
+        if (!live) return
+        setThinking(false)
+        if (!uci) return
         const c = new Chess(fen)
         try {
           const m = c.move(parseUci(uci))
@@ -248,13 +258,14 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
         } catch {
           // Engine returned an unexpected move; ignore.
         }
-        setThinking(false)
       }, delay)
     })
     return () => {
       live = false
+      window.clearTimeout(timer)
+      setThinking(false)
     }
-  }, [fen, turn, color, phase, bot, warning])
+  }, [fen, over, turn, color, phase, bot, warning])
 
   const onMove = (input: MoveInput): boolean => {
     if (phase !== 'playing' || turn !== color || warning) return false

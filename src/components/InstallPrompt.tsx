@@ -1,12 +1,9 @@
 // Helps the learner install Chess Master as an app: step-by-step "Add to Home
 // Screen" instructions on iPhone/iPad, and the native install button on
 // Chrome/Edge/Android.
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useInstallEvent } from '../lib/install'
 import { Button, Card } from './ui'
-
-interface InstallEvent extends Event {
-  prompt: () => Promise<void>
-}
 
 const DISMISS_KEY = 'chessmaster.installHintDismissed'
 
@@ -27,19 +24,10 @@ function readDismissed() {
 }
 
 export default function InstallPrompt({ dismissible = true }: { dismissible?: boolean }) {
-  const [installEvent, setInstallEvent] = useState<InstallEvent | null>(null)
+  const installEvent = useInstallEvent()
   const [dismissed, setDismissed] = useState(() => dismissible && readDismissed())
   const installed = isInstalled()
   const ios = isIos()
-
-  useEffect(() => {
-    const onPrompt = (e: Event) => {
-      e.preventDefault()
-      setInstallEvent(e as InstallEvent)
-    }
-    window.addEventListener('beforeinstallprompt', onPrompt)
-    return () => window.removeEventListener('beforeinstallprompt', onPrompt)
-  }, [])
 
   if (dismissed) return null
   if (installed) {

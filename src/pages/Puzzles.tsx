@@ -3,9 +3,10 @@ import Board from '../components/Board'
 import CoachPanel from '../components/CoachPanel'
 import { Badge, Button, Card, PageHeader } from '../components/ui'
 import type { Puzzle } from '../data/types'
-import { moveToUci, parseUci, tryMove, type MoveInput } from '../lib/chess'
+import { formatLine, moveToUci, parseUci, pvToSan, tryMove, type MoveInput } from '../lib/chess'
 import { updatePuzzleRating } from '../lib/rating'
 import { THEME_LABELS } from '../lib/themes'
+import { useTimers } from '../lib/useTimers'
 import { getProgress, updateProgress, useProgress } from '../lib/storage'
 
 const PRACTICE_THEMES = ['mateIn1', 'mateIn2', 'mateIn3', 'fork', 'pin', 'skewer', 'discoveredAttack', 'hangingPiece', 'backRankMate', 'sacrifice', 'promotion', 'endgame']
@@ -37,33 +38,43 @@ export default function Puzzles() {
   const [message, setMessage] = useState<string>('')
   const [delta, setDelta] = useState<number | null>(null)
   const [showCoach, setShowCoach] = useState(false)
+  /** A retry of a puzzle that already counted: playable, but it never changes the rating again. */
+  const [practice, setPractice] = useState(false)
+  /** Whether the current attempt has already been scored. */
   const rated = useRef(false)
-  const timer = useRef<number | undefined>(undefined)
+  const ratedIds = useRef(new Set<string>())
+  const timers = useTimers()
 
   useEffect(() => {
     import('../data/puzzles.json').then((m) => setPuzzles(m.default as Puzzle[]))
-    return () => window.clearTimeout(timer.current)
   }, [])
 
   const start = useCallback(
     (p: Puzzle | undefined) => {
-      window.clearTimeout(timer.current)
+      timers.clear()
       setShowCoach(false)
       setHint(null)
       setDelta(null)
-      rated.current = false
       if (!p) {
+        rated.current = false
+        setPractice(false)
         setPuzzle(null)
+        setFen('')
+        setLastMove(null)
+        setMessage('')
         setStatus('loading')
         return
       }
+      const retry = ratedIds.current.has(p.id)
+      rated.current = retry
+      setPractice(retry)
       setPuzzle(p)
       setFen(p.fen)
       setIndex(0)
       setLastMove(null)
       setStatus('playing')
       setMessage('')
-      timer.current = window.setTimeout(() => {
+      timers.schedule(() => {
         const r = tryMove(p.fen, parseUci(p.moves[0]))
         if (!r) return
         setFen(r.chess.fen())
@@ -72,14 +83,24 @@ export default function Puzzles() {
         setMessage(`Your move — find the best move for ${r.chess.turn() === 'w' ? 'White' : 'Black'}.`)
       }, 700)
     },
-    [],
+    [timers],
   )
 
-  const nextPuzzle = useCallback(() => {
-    if (!puzzles) return
-    const p = getProgress()
-    start(pickPuzzle(puzzles, p.puzzle.rating, theme, p.puzzle.seen, puzzle?.id))
-  }, [puzzles, theme, puzzle, start])
+  const nextPuzzle = useCallback(
+    (forTheme: string | null = theme) => {
+      if (!puzzles) return
+      const p = getProgress()
+      start(pickPuzzle(puzzles, p.puzzle.rating, forTheme, p.puzzle.seen, puzzle?.id))
+    },
+    [puzzles, theme, puzzle, start],
+  )
+
+  // Switching theme loads a matching puzzle straight away. An attempt already
+  // scored stays scored; an untouched puzzle is simply set aside without penalty.
+  const chooseTheme = (next: string | null) => {
+    setTheme(next)
+    nextPuzzle(next)
+  }
 
   useEffect(() => {
     if (puzzles && !puzzle) nextPuzzle()
@@ -90,6 +111,7 @@ export default function Puzzles() {
   const record = (solved: boolean) => {
     if (rated.current || !puzzle) return
     rated.current = true
+    ratedIds.current.add(puzzle.id)
     const before = getProgress().puzzle.rating
     updateProgress((p) => {
       const played = p.puzzle.solved + p.puzzle.failed
@@ -129,15 +151,18 @@ export default function Puzzles() {
     setFen(result.chess.fen())
     setLastMove({ from: result.move.from, to: result.move.to })
     if (isLast || result.chess.isCheckmate()) {
-      setStatus(rated.current ? 'failed' : 'solved')
-      if (!rated.current) record(true)
-      setMessage(rated.current ? 'Solved — but it took more than one try. Keep practising!' : 'Correct! Puzzle solved. 🎉')
+      const firstTry = !rated.current
+      if (firstTry) record(true)
+      setStatus(firstTry || practice ? 'solved' : 'failed')
+      setMessage(
+        practice ? 'Solved! (Practice run: your rating is unchanged.)' : firstTry ? 'Correct! Puzzle solved. 🎉' : 'Solved, but it took more than one try. Keep practising!',
+      )
       return true
     }
     setMessage(`${result.move.san} — correct! Keep going…`)
     const reply = puzzle.moves[index + 1]
     const afterFen = result.chess.fen()
-    timer.current = window.setTimeout(() => {
+    timers.schedule(() => {
       const r = tryMove(afterFen, parseUci(reply))
       if (!r) return
       setFen(r.chess.fen())
@@ -158,9 +183,10 @@ export default function Puzzles() {
     if (!puzzle) return
     record(false)
     setStatus('failed')
+    timers.clear()
     let current = fen
     puzzle.moves.slice(index).forEach((uci, i) => {
-      timer.current = window.setTimeout(() => {
+      timers.schedule(() => {
         const r = tryMove(current, parseUci(uci))
         if (!r) return
         current = r.chess.fen()
@@ -187,11 +213,11 @@ export default function Puzzles() {
       </PageHeader>
 
       <div className="no-scrollbar -mx-4 mb-3 flex gap-1.5 overflow-x-auto px-4 md:mx-0 md:mb-4 md:flex-wrap md:px-0">
-        <ThemeChip active={theme === null} onClick={() => setTheme(null)}>
+        <ThemeChip active={theme === null} onClick={() => chooseTheme(null)}>
           🎯 Rated mix
         </ThemeChip>
         {PRACTICE_THEMES.map((t) => (
-          <ThemeChip key={t} active={theme === t} onClick={() => setTheme(t)}>
+          <ThemeChip key={t} active={theme === t} onClick={() => chooseTheme(t)}>
             {THEME_LABELS[t]}
           </ThemeChip>
         ))}
@@ -209,7 +235,9 @@ export default function Puzzles() {
               highlights={hint ? { [hint]: 'rgba(95,184,95,0.65)' } : {}}
             />
           ) : (
-            <Card className="flex aspect-square items-center justify-center text-muted">{puzzles ? 'No puzzles for this theme yet.' : 'Loading puzzles…'}</Card>
+            <Card className="flex aspect-square items-center justify-center p-6 text-center text-muted">
+              {!puzzles ? 'Loading puzzles…' : theme ? `You've done every ${THEME_LABELS[theme] ?? theme} puzzle for now. Pick another theme to keep training.` : 'No puzzles available yet.'}
+            </Card>
           )}
         </div>
         <div className="flex flex-col gap-4">
@@ -227,7 +255,7 @@ export default function Puzzles() {
                 status === 'solved' ? 'bg-good/15 text-good' : status === 'failed' || message.includes('not the best') ? 'bg-bad/10 text-bad' : 'bg-panel-2'
               }`}
             >
-              {message || 'Watch your opponent’s move…'}
+              {puzzle ? message || 'Watch your opponent’s move…' : 'Pick a theme above to keep training.'}
             </p>
             {status !== 'playing' && puzzle && (
               <div className="mt-3 flex flex-wrap gap-1.5">
@@ -251,25 +279,37 @@ export default function Puzzles() {
                 </>
               ) : (
                 <>
-                  <Button variant="primary" onClick={nextPuzzle}>
+                  <Button variant="primary" onClick={() => nextPuzzle()} disabled={!puzzles}>
                     Next puzzle →
                   </Button>
-                  <Button onClick={() => puzzle && start(puzzle)}>↺ Retry</Button>
-                  <Button variant="ghost" onClick={() => setShowCoach((s) => !s)}>
-                    🤖 Explain
-                  </Button>
+                  {puzzle && (
+                    <>
+                      <Button onClick={() => start(puzzle)}>↺ Retry</Button>
+                      <Button variant="ghost" onClick={() => setShowCoach((s) => !s)}>
+                        🤖 Explain
+                      </Button>
+                    </>
+                  )}
                 </>
               )}
             </div>
-            <p className="mt-3 text-xs text-muted">Hints, solutions and skips count as a miss for your rating.</p>
+            <p className="mt-3 text-xs text-muted">
+              {practice ? 'Practice run: this puzzle already counted, so your rating will not change.' : 'Hints, solutions and skips count as a miss for your rating.'}
+            </p>
           </Card>
 
           {showCoach && puzzle && (
             <CoachPanel
-              context={() => ({
-                fen: puzzle.fen,
-                activity: `Tactics puzzle rated ${puzzle.rating} (themes: ${puzzle.themes.map((t) => THEME_LABELS[t] ?? t).join(', ')}). In this position the opponent played ${puzzle.moves[0]} (UCI); the solution (UCI) is ${puzzle.moves.slice(1).join(' ')}. Explain the tactic in the solution.`,
-              })}
+              context={() => {
+                // The puzzle starts after the opponent's move: give the coach that position and the solution in SAN.
+                const setup = tryMove(puzzle.fen, parseUci(puzzle.moves[0]))
+                const solverFen = setup ? setup.chess.fen() : puzzle.fen
+                const solution = formatLine(solverFen, pvToSan(solverFen, puzzle.moves.slice(1), 20))
+                return {
+                  fen: solverFen,
+                  activity: `Tactics puzzle rated ${puzzle.rating} (themes: ${puzzle.themes.map((t) => THEME_LABELS[t] ?? t).join(', ')}). The opponent has just played ${setup?.move.san ?? puzzle.moves[0]}. The winning solution for the side to move is: ${solution}. Explain the tactic in this solution.`,
+                }
+              }}
               suggestions={['Explain the solution', 'What pattern is this?', 'How can I spot this in my games?']}
             />
           )}

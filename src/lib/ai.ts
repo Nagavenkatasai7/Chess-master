@@ -151,16 +151,18 @@ export async function streamChat(
       if ([402, 404, 408, 429, 500, 502, 503].includes(res.status)) continue
       throw new AiError(`The AI coach request failed (${lastError}).`)
     }
-    const produced = await readStream(res.body, onToken)
+    const { produced, error } = await readStream(res.body, onToken)
+    if (error && produced) throw new AiError(`The model stopped with an error: ${error}`)
     if (produced) return { model: candidate }
-    lastError = `${candidate}: empty response`
+    // Upstream rate limits and provider failures often arrive as an error event in a 200 stream.
+    lastError = `${candidate}: ${error ?? 'empty response'}`
   }
   throw new AiError(
     `All free models are busy or rate limited right now (${lastError}). Free models allow a limited number of requests per day — try again later or pick another model in Settings.`,
   )
 }
 
-async function readStream(body: ReadableStream<Uint8Array>, onToken: (text: string) => void): Promise<boolean> {
+async function readStream(body: ReadableStream<Uint8Array>, onToken: (text: string) => void): Promise<{ produced: boolean; error?: string }> {
   const reader = body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
@@ -175,19 +177,23 @@ async function readStream(body: ReadableStream<Uint8Array>, onToken: (text: stri
       buffer = buffer.slice(nl + 1)
       if (!line.startsWith('data:')) continue
       const data = line.slice(5).trim()
-      if (data === '[DONE]') return produced
+      if (data === '[DONE]') return { produced }
+      let json: { error?: { message?: string }; choices?: { delta?: { content?: string } }[] }
       try {
-        const json = JSON.parse(data)
-        if (json.error) throw new AiError(json.error.message ?? 'The model returned an error.')
-        const text: string | undefined = json.choices?.[0]?.delta?.content
-        if (text) {
-          produced = true
-          onToken(text)
-        }
-      } catch (e) {
-        if (e instanceof AiError) throw e
+        json = JSON.parse(data)
+      } catch {
+        continue
+      }
+      if (json.error) {
+        void reader.cancel()
+        return { produced, error: json.error.message ?? 'The model returned an error.' }
+      }
+      const text = json.choices?.[0]?.delta?.content
+      if (text) {
+        produced = true
+        onToken(text)
       }
     }
   }
-  return produced
+  return { produced }
 }

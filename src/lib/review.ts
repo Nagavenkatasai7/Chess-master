@@ -40,6 +40,7 @@ export async function analyseGame(
   sans: string[],
   depth: number,
   onProgress: (done: number, total: number) => void,
+  isCancelled: () => boolean = () => false,
 ): Promise<PositionEval[]> {
   const chess = new Chess(startFen)
   const fens = [chess.fen()]
@@ -49,6 +50,7 @@ export async function analyseGame(
   }
   const out: PositionEval[] = []
   for (let i = 0; i < fens.length; i++) {
+    if (isCancelled()) break
     const fen = fens[i]
     const pos = new Chess(fen)
     const terminal = terminalScore(pos)
