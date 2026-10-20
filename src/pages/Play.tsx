@@ -54,7 +54,7 @@ export default function Play() {
     return (
       <div>
         <PageHeader title="Play vs computer" subtitle="Pick an opponent a little stronger than you. Beat them twice in a row, then move up a level." />
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {BOTS.map((bot) => {
               const record = progress.games.filter((g) => g.botLevel === bot.level)
@@ -377,7 +377,7 @@ function GameView({ setup, onNewGame, onPlayFrom }: { setup: GameSetup; onNewGam
   const flip = () => setOrientation((o) => (o === 'white' ? 'black' : 'white'))
 
   return (
-    <div className="grid gap-4 md:gap-6 lg:grid-cols-[minmax(0,600px)_1fr]">
+    <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-[minmax(0,600px)_1fr]">
       <div className="space-y-1.5 md:space-y-2">
         <MoveStrip sans={sans} startFen={startFen} />
         {player(top)}

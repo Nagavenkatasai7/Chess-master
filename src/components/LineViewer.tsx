@@ -29,7 +29,7 @@ export default function LineViewer({
   const note = notes?.[ply]
 
   return (
-    <div className="grid gap-4 md:grid-cols-[minmax(0,420px)_1fr]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,420px)_1fr]">
       <div>
         <Board fen={current} orientation={orientation ?? (startTurn === 'b' ? 'black' : 'white')} lastMove={last} />
         <div className="mt-3 flex items-center justify-center gap-2">

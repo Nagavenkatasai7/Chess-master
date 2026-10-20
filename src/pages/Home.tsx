@@ -67,7 +67,7 @@ export default function Home() {
         </Card>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <div className="flex flex-wrap items-center gap-5">
             <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-panel-2 text-4xl">{current.icon}</div>

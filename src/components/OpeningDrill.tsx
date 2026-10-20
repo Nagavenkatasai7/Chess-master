@@ -73,7 +73,7 @@ export default function OpeningDrill({ opening, line, onComplete }: { opening: O
   const note = line.notes?.[ply]
 
   return (
-    <div className="grid gap-4 md:grid-cols-[minmax(0,460px)_1fr]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,460px)_1fr]">
       <Board
         fen={fen}
         orientation={opening.side}

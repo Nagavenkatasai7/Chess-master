@@ -28,7 +28,7 @@ export default function Handbook() {
       </div>
 
       {tab === 'tips' && (
-        <div className="grid gap-6 md:grid-cols-[220px_1fr]">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-[220px_1fr]">
           <nav className="flex gap-1.5 overflow-x-auto md:flex-col">
             {tipSections.map((s) => (
               <button
@@ -48,7 +48,7 @@ export default function Handbook() {
                   Level {current.level}: {LEVELS[current.level - 1].name}
                 </Badge>
               </div>
-              <div className="grid gap-3 lg:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
                 {current.tips.map((tip, i) => {
                   const key = `${current.id}-${i}`
                   const hasBoard = !!tip.fen || !!tip.moves
@@ -81,7 +81,7 @@ export default function Handbook() {
       )}
 
       {tab === 'traps' && (
-        <div className="grid gap-6 md:grid-cols-[260px_1fr]">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-[260px_1fr]">
           <nav className="flex max-h-[70vh] gap-1.5 overflow-auto md:flex-col">
             {traps.map((t) => (
               <button

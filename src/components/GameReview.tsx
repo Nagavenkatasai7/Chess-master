@@ -80,7 +80,7 @@ export default function GameReview({
   const startTurn = startFen.split(' ')[1]
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,560px)_1fr]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,560px)_1fr]">
       <div>
         <div className="flex gap-2">
           <EvalBar score={evals[ply].score} orientation={playerColor === 'w' ? 'white' : 'black'} />

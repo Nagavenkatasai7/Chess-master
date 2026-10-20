@@ -41,7 +41,7 @@ export default function Learn() {
                 </div>
               </div>
               {modules.length === 0 && <p className="text-sm text-muted">Lessons for this level are coming soon.</p>}
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {modules.map((mod) => {
                   const done = mod.lessons.filter((l) => progress.lessons[l.id]).length
                   return (

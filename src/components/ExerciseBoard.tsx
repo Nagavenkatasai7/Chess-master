@@ -147,7 +147,7 @@ export default function ExerciseBoard({ exercise, onSolved, solvedBefore }: { ex
   const counter = solo ? `Moves: ${moves}/${exercise.maxMoves}` : null
 
   return (
-    <div className="grid gap-4 md:grid-cols-[minmax(0,420px)_1fr]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,420px)_1fr]">
       <div>
         <Board
           fen={fen}

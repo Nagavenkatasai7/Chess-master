@@ -91,7 +91,7 @@ export default function Analysis() {
   return (
     <div>
       <PageHeader title="Analysis board" subtitle="Play out any idea, load a position or a game, and see what Stockfish thinks. Ask the coach to explain it in plain English." />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,600px)_1fr]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,600px)_1fr]">
         <div>
           <div className="flex gap-2">
             {engineOn && <EvalBar score={score} orientation={orientation} />}
