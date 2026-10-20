@@ -1046,4 +1046,907 @@ const matesModule: Module = {
   ],
 }
 
-export const level2: Module[] = [openingModule, safetyModule, matesModule]
+// ---------------------------------------------------------------------------
+// Module 4 · First tactics
+// ---------------------------------------------------------------------------
+
+const tacticsModule: Module = {
+  id: 'l2-tactics',
+  level: 2,
+  title: 'First Tactics',
+  description: 'Your first winning tricks: double attacks, forks, pins, skewers and discovered attacks.',
+  lessons: [
+    {
+      id: 'l2-tac-double',
+      title: 'The double attack',
+      summary: 'Attack two things with one move. Your opponent can only save one of them.',
+      estMinutes: 8,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            In the last modules you learned to take pieces that are simply left hanging. But a careful opponent will not leave pieces hanging for long. So how do you win material against someone who is paying attention?
+
+            With a **tactic**: a short, forcing sequence of moves that wins something. Tactics are where most games at your level are won and lost.
+
+            The most important tactic of all is the **double attack**: one move that creates **two threats at once**. Your opponent has only one move to reply, so they can usually deal with only one of the threats. You collect the other.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '3Q2k1/p4pp1/7p/r7/8/8/PP3PPP/6K1 b - - 1 1',
+          arrows: [['d8', 'g8'], ['d8', 'a5']],
+          highlights: ['g8', 'a5'],
+          caption: 'A double attack. The queen on d8 gives check AND attacks the rook on a5. Black must answer the check, and then the rook falls.',
+        },
+        {
+          type: 'text',
+          md: md(`
+            ### What makes a good target?
+
+            A double attack works best when it hits things that cannot simply be defended together:
+
+            - The **king** (a check must be answered at once, so it is the strongest threat of all).
+            - **Loose pieces**: pieces with no defender.
+            - Pieces worth **more** than the attacker.
+            - A **checkmate threat**. If your move threatens mate *and* attacks a piece, your opponent must stop the mate and lose the piece.
+
+            The queen is the best double-attacker because she moves in eight directions. Whenever your queen is free, ask: **"Is there a square where she attacks two things?"**
+          `),
+        },
+        {
+          type: 'tip',
+          title: 'Look for two targets',
+          md: md(`
+            Train your eyes: every time it is your move, quickly list the enemy pieces that are **loose** and the enemy **king**. If two of them can be hit from the same square, you may have a double attack.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-double-ex1',
+            prompt: 'Black\'s rook on a5 has no defender. White to move: win it with a double attack.',
+            fen: '6k1/p4pp1/7p/r7/8/8/PP3PPP/3Q2K1 w - - 0 1',
+            solution: ['Qd8+', 'Kh7', 'Qxa5'],
+            hint: 'Find a queen check that also lines up with the rook on a5.',
+            explanation: 'Qd8+! checks the king along the back rank and attacks the rook along the diagonal at the same time. Black must save the king with ...Kh7, and then Qxa5 picks up the rook. One move, two threats.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-double-ex2',
+            prompt: 'Black\'s bishop on h4 is loose. White to move: win it with a check.',
+            fen: 'r3k2r/ppp2ppp/8/8/7b/8/PP3PPP/3Q1RK1 w - - 0 1',
+            solution: ['Qa4+', 'Kf8', 'Qxh4'],
+            hint: 'The black king on e8 is open on the diagonal towards a4. What else can a queen on a4 see?',
+            explanation: 'Qa4+! checks the king along the a4-e8 diagonal and attacks the bishop along the 4th rank. Black has to get out of check first, and then Qxh4 wins the bishop. Checks are the best first half of a double attack, because they must be answered.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-double-ex3',
+            prompt: 'Your bishop on d3 aims at h7. White to move: threaten checkmate and attack a loose piece at the same time.',
+            fen: '5rk1/ppq2ppp/8/8/1b6/3B4/PPP1QPPP/4R1K1 w - - 0 1',
+            solution: ['Qe4', 'g6', 'Qxb4'],
+            hint: 'Put the queen on the bishop\'s diagonal towards h7. Which square also attacks the bishop on b4?',
+            explanation: 'Qe4! threatens Qxh7# (the queen is protected by the bishop) and also attacks the loose bishop on b4 along the 4th rank. Black must stop the mate, for example with ...g6, and then Qxb4 wins a piece. A mate threat is a wonderful partner in a double attack.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-tac-fork',
+      title: 'Knight and pawn forks',
+      summary: 'A fork is a double attack by one piece on two enemy pieces. Knights and pawns are the champion forkers.',
+      estMinutes: 9,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            When one piece attacks two or more enemy pieces at the same time, we call it a **fork**. Any piece can fork, but two pieces are especially good at it:
+
+            - **Knights**, because they jump in an unusual shape. A knight can attack a king, a queen and a rook all at once, and none of them can attack the knight back!
+            - **Pawns**, because they are worth only 1 point. If a pawn forks two pieces, you win a piece even if the pawn is captured.
+
+            A knight fork that includes the king is called a **royal fork**. If it hits the king, queen and rook together, it is sometimes called a **family fork**.
+          `),
+        },
+        {
+          type: 'board',
+          fen: 'r3k3/2N5/4q3/8/8/8/5PPP/6K1 b - - 0 1',
+          arrows: [['c7', 'e8'], ['c7', 'a8'], ['c7', 'e6']],
+          highlights: ['e8', 'a8', 'e6'],
+          caption: 'A family fork. The knight on c7 checks the king and attacks the rook and the queen. Black must move the king, and White takes the queen.',
+        },
+        {
+          type: 'tip',
+          title: 'Spotting knight forks',
+          md: md(`
+            Knight forks are easy to miss because the knight does not move in a straight line. Look for **enemy pieces that stand a knight's jump apart from the same empty square**, especially the king and queen, or the king and a rook. Squares like c7 and f7 (or c2 and f2 for White) are classic fork squares.
+          `),
+        },
+        {
+          type: 'line',
+          moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Bc5', 'Nc3', 'Nf6', 'Nxe5', 'Nxe5', 'd4', 'Bd6', 'dxe5', 'Bxe5'],
+          caption: 'The fork trick: a pawn fork wins back a piece.',
+          notes: {
+            9: 'White gives up a knight for a pawn... on purpose!',
+            10: 'Black takes the knight. It looks as if White is simply a piece down.',
+            11: 'The pawn fork! The d4-pawn attacks both the bishop on c5 and the knight on e5. Black can save only one.',
+            12: 'Black saves the bishop.',
+            13: 'White wins the piece back.',
+            14: 'Material is equal again, and White has a strong centre and easy development. A pawn fork turned a sacrifice into a good trade.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-fork-ex1',
+            prompt: 'White to move: find the royal fork.',
+            fen: 'r3kb2/1p3ppp/8/3N4/8/8/PP3PPP/3R2K1 w - - 0 1',
+            solution: ['Nc7+', 'Ke7', 'Nxa8'],
+            hint: 'Which square lets the knight check the king and attack the rook on a8?',
+            explanation: 'Nc7+! forks the king on e8 and the rook on a8. The king must move, and Nxa8 wins a whole rook. Notice that neither the king nor the rook can capture the knight on c7.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-fork-ex2',
+            prompt: 'Black\'s queen and king are a knight\'s jump apart from the same square. White to move: win the queen.',
+            fen: '6k1/pp3ppp/2q5/3N4/8/8/PP3PPP/3R2K1 w - - 0 1',
+            solution: ['Ne7+', 'Kf8', 'Nxc6'],
+            hint: 'Find a knight check from a square that also attacks c6.',
+            explanation: 'Ne7+! forks the king on g8 and the queen on c6. After the king moves, Nxc6 wins the queen for a knight. Always check whether the enemy king and queen are a knight\'s move apart from one square.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-fork-ex3',
+            prompt: 'White\'s bishop on d3 and knight on f3 stand side by side. Black to move: fork them with a pawn.',
+            fen: '4r1k1/ppp2ppp/3b1n2/3pp3/8/3B1N2/PPP2PPP/4R1K1 b - - 0 1',
+            solution: ['e4'],
+            hint: 'A pawn on e4 would attack both d3 and f3. Is e4 safe for your pawn?',
+            explanation: '...e4! forks the bishop and the knight. The pawn is protected by the d5-pawn and the f6-knight, so taking it costs White a piece anyway. White can save only one of the two pieces, and Black wins material. A pawn is the cheapest forker of all.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-tac-pin',
+      title: 'Pins: absolute and relative',
+      summary: 'A pinned piece cannot move without exposing something more valuable behind it.',
+      estMinutes: 10,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            A **pin** happens when a bishop, rook or queen attacks an enemy piece, and behind that piece stands something **more valuable**. The front piece is stuck: if it moves, the piece behind it is exposed.
+
+            There are two kinds of pins:
+
+            - **Absolute pin**: the piece behind is the **king**. The pinned piece is *not allowed* to move at all, because that would put its own king in check.
+            - **Relative pin**: the piece behind is something else, like the queen or a rook. The pinned piece *may* move, but it costs the piece behind it.
+          `),
+        },
+        {
+          type: 'board',
+          fen: 'r1bqkbnr/ppp2ppp/2np4/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4',
+          arrows: [['b5', 'e8']],
+          highlights: ['c6'],
+          caption: 'An absolute pin. The knight on c6 cannot move, because the bishop on b5 would then be checking the black king.',
+        },
+        {
+          type: 'text',
+          md: md(`
+            ### How to use a pin
+
+            1. **Win the pinned piece** if it is worth more than the pinner, like a queen pinned by a bishop.
+            2. **Attack the pinned piece again**, ideally with a pawn. It cannot run away.
+            3. **Ignore its "defence"**. A pinned piece does not really defend anything, because moving it would expose the piece behind.
+
+            But be careful with relative pins: the pinned piece is *allowed* to move, and sometimes it moves with a nasty surprise. Here is a famous trap where White forgets this.
+          `),
+        },
+        {
+          type: 'line',
+          moves: ['d4', 'd5', 'c4', 'e6', 'Nc3', 'Nf6', 'Bg5', 'Nbd7', 'cxd5', 'exd5', 'Nxd5', 'Nxd5', 'Bxd8', 'Bb4+', 'Qd2', 'Bxd2+', 'Kxd2', 'Kxd8'],
+          caption: 'The Elephant Trap: a relative pin is not a real pin.',
+          notes: {
+            7: 'A relative pin: the knight on f6 is pinned to the black queen on d8.',
+            11: 'White grabs a pawn, thinking the f6-knight cannot recapture because of the pin.',
+            12: 'But it can! The pin is only relative, so the knight is allowed to move.',
+            13: 'White takes the queen, as planned...',
+            14: 'Check! This was Black\'s idea all along.',
+            15: 'White\'s only sensible way to block the check is with the queen.',
+            16: 'Black takes White\'s queen, with check.',
+            18: 'Black also takes the bishop on d8. Black has won a whole piece. Lesson: a relative pin can be broken if moving the pinned piece creates a bigger threat.',
+          },
+        },
+        {
+          type: 'tip',
+          title: 'Rule of thumb',
+          md: md(`
+            **Pins are strongest against the king.** An absolutely pinned piece is frozen, so pile up on it. A relatively pinned piece can still move, so before you rely on a relative pin, ask: "What happens if the pinned piece moves anyway?"
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-pin-ex1',
+            prompt: 'Black\'s queen and king stand on the same diagonal. White to move: pin the queen and win it.',
+            fen: '4k2r/pp1q1ppp/4p3/8/8/2NB4/PPP2PPP/3R2K1 w - - 0 1',
+            solution: ['Bb5'],
+            hint: 'Which bishop move attacks the queen with the king standing behind her? Make sure the bishop is protected.',
+            explanation: 'Bb5! pins the queen to the king. The queen is not allowed to move off the diagonal, so the best Black can do is ...Qxb5, and after Nxb5 Black has given up a queen (9) for a bishop (3). The knight on c3 was important: it protects the bishop.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-pin-ex2',
+            prompt: 'Black\'s knight on c6 is pinned to the king. White to move: attack it again.',
+            fen: 'r3k3/1pp1pppp/2n5/1B6/3P4/8/PPP2PPP/5RK1 w - - 0 1',
+            solution: ['d5'],
+            hint: 'A pinned piece cannot run away. Attack it with your cheapest piece.',
+            explanation: 'd5! attacks the pinned knight with a pawn. The knight is not allowed to move because of the bishop on b5, so Black will lose it for a pawn at most. This is the classic way to punish a pin: **pile up on the pinned piece**.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-pin-ex3',
+            prompt: 'Black\'s bishop on g4 attacks your queen, and it is "defended" by the knight on e5. But that knight is pinned to the black queen by your rook. White to move.',
+            fen: '6k1/ppp1qpp1/7p/4n3/6b1/8/PPP2PPP/3QR2K w - - 0 1',
+            solution: ['Qxg4'],
+            hint: 'Does the knight on e5 really protect the bishop? What happens if it recaptures?',
+            explanation: 'Qxg4! wins the bishop. If Black recaptures with ...Nxg4, the knight leaves the e-file and Rxe7 wins the black queen. The knight is in a **relative pin**, so its defence of g4 was an illusion.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-tac-skewer',
+      title: 'Skewers',
+      summary: 'A skewer is a pin turned around: attack the big piece in front, and take the piece behind it.',
+      estMinutes: 7,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            A **skewer** is like a pin in reverse. A bishop, rook or queen attacks a **valuable** piece, and behind it on the same line stands **another** piece. When the valuable piece moves out of the way, the piece behind it is captured.
+
+            The most common skewer is a **check**: the king must move, and you take whatever was hiding behind it.
+
+            - In a **pin**, the *less* valuable piece is in front.
+            - In a **skewer**, the *more* valuable piece is in front.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '8/5p2/R2k3r/6p1/8/8/5PPP/6K1 b - - 1 1',
+          arrows: [['a6', 'd6'], ['d6', 'h6']],
+          highlights: ['d6', 'h6'],
+          caption: 'A skewer. The rook checks the king along the 6th rank. When the king steps aside, the rook on h6 is undefended and falls.',
+        },
+        {
+          type: 'tip',
+          title: 'Where skewers hide',
+          md: md(`
+            Look for an enemy **king and another piece on the same line** (a rank, a file or a diagonal) with nothing between them. Then ask: can one of my long-range pieces give check on that line, from a safe square? Skewers are especially common in endgames, when kings walk into the open.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-skewer-ex1',
+            prompt: 'Black\'s king and rook are both on the 6th rank. White to move: skewer them.',
+            fen: '8/5p2/3k3r/6p1/8/8/5PPP/R5K1 w - - 0 1',
+            solution: ['Ra6+', 'Ke5', 'Rxh6'],
+            hint: 'Give check along the 6th rank from a square the king cannot reach.',
+            explanation: 'Ra6+! checks the king along the 6th rank. The king has to leave the rank, and then Rxh6 wins the rook. The rook checks from far away on a6, where the king cannot capture it.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-skewer-ex2',
+            prompt: 'Black\'s king on e5 and queen on h8 share a long diagonal. White to move: win the queen.',
+            fen: '7q/pp3p1p/8/4k3/8/8/PP3PPP/4B1K1 w - - 0 1',
+            solution: ['Bc3+', 'Kf5', 'Bxh8'],
+            hint: 'Your bishop can reach the long diagonal with check.',
+            explanation: 'Bc3+! checks the king along the a1-h8 diagonal. When the king steps off the diagonal, Bxh8 takes the queen. A bishop worth 3 points has won a queen worth 9.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-skewer-ex3',
+            prompt: 'Black\'s king on f5 and rook on c8 are on the same diagonal. White to move: skewer them with your queen.',
+            fen: '2r5/pp3p1p/b7/5k2/8/4Q3/PP3PPP/6K1 w - - 0 1',
+            solution: ['Qh3+', 'Kg6', 'Qxc8'],
+            hint: 'Find the queen check along the h3-c8 diagonal.',
+            explanation: 'Qh3+! checks along the diagonal h3-g4-f5, and the rook on c8 is hiding behind the king on the same line. After the king moves, Qxc8 wins the rook.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-tac-discover',
+      title: 'Discovered attacks',
+      summary: 'Move one piece out of the way and unleash the piece behind it: two attackers in one move.',
+      estMinutes: 9,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            A **discovered attack** happens when you move one piece and, by moving it, **uncover** an attack by another piece standing behind it.
+
+            It is a special kind of double attack: the piece that moves can make its own threat, while the piece behind it attacks something else. Your opponent faces two threats from two different pieces.
+
+            ### Discovered check
+
+            The strongest version is a **discovered check**: the uncovered piece gives check. Your opponent *must* deal with the check, so the piece that moved can attack almost anything, even the queen, and get away with it.
+
+            If both pieces give check at the same time, it is a **double check**. Then the king *must* move, because you cannot block or capture two checkers at once.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '4k3/pp3ppp/8/4N3/8/8/PP3PPP/4R1K1 w - - 0 1',
+          arrows: [['e1', 'e8']],
+          highlights: ['e5'],
+          caption: 'A loaded gun: only the knight on e5 stands between the rook and the black king. Wherever the knight jumps, the rook gives check, so the knight can attack anything it likes.',
+        },
+        {
+          type: 'tip',
+          title: 'Look behind your own pieces',
+          md: md(`
+            Whenever one of your pieces stands **in front of** your own bishop, rook or queen, and an enemy king or queen is further down that line, you have a loaded gun. Find a move for the front piece that **creates a second threat**, ideally a check or a capture.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-discover-ex1',
+            prompt: 'Your bishop on e5 blocks your rook\'s attack on the black king. White to move: move the bishop and win material.',
+            fen: 'r3k2r/ppp2p1p/8/4B3/8/8/PP3PPP/4R1K1 w - - 0 1',
+            solution: ['Bxh8+'],
+            hint: 'Every bishop move gives discovered check. Which one also captures something valuable?',
+            explanation: 'Bxh8+! The bishop captures the rook, and at the same time the rook on e1 gives check. Black must answer the check and cannot win back the bishop. With a discovered check, the moving piece can grab almost anything.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-discover-ex2',
+            prompt: 'Your knight on e5 stands between your rook and the black king. White to move: win the black queen.',
+            fen: '4k2r/pp3ppp/8/2p1N3/5B2/q1P5/P4PPP/4R1K1 w - - 0 1',
+            solution: ['Nc4+', 'Kd7', 'Nxa3'],
+            hint: 'Move the knight with discovered check to a square where it attacks the queen on a3.',
+            explanation: 'Nc4+! uncovers a check from the rook on e1, and the knight itself attacks the queen on a3. Black must deal with the check first, and then Nxa3 takes the queen.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-tac-discover-ex3',
+            prompt: 'Black\'s queen on d5 is hiding behind your bishop on d3. White to move: unleash your rook.',
+            fen: '5rk1/pp3ppp/8/3q4/8/3B1N2/PP3PPP/3R2K1 w - - 0 1',
+            solution: ['Bxh7+', 'Kxh7', 'Rxd5'],
+            hint: 'If the bishop just moves away, the queen can take your rook. So the bishop must move with check!',
+            explanation: 'Bxh7+! gives check, so Black has no time to save the queen. After ...Kxh7, Rxd5 wins the queen for a bishop. If the bishop had moved without check, Black would have played ...Qxd1+. That is why the moving piece should make a **forcing** threat.',
+          },
+        },
+      ],
+    },
+  ],
+}
+
+// ---------------------------------------------------------------------------
+// Module 5 · Simple endgames
+// ---------------------------------------------------------------------------
+
+const endgameModule: Module = {
+  id: 'l2-endgames',
+  level: 2,
+  title: 'Simple Endgames',
+  description: 'When only a few pieces are left: activate your king, push passed pawns, use the rule of the square and learn the opposition.',
+  lessons: [
+    {
+      id: 'l2-end-king',
+      title: 'Your king is a fighting piece',
+      summary: 'In the endgame the king comes out of hiding and becomes one of your best pieces.',
+      estMinutes: 7,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            In the opening and middlegame you keep your king safe behind its pawns. But when most of the pieces have been traded, and especially once the **queens are gone**, there is nobody left to attack your king. Now it is time for the king to **join the fight**.
+
+            In the endgame the king is a strong piece, worth roughly as much as a minor piece. It can:
+
+            - **attack enemy pawns** and eat them,
+            - **defend its own pawns**,
+            - **escort a passed pawn** all the way to promotion,
+            - and **block enemy pawns** from promoting.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '8/pp3ppp/3k4/3p4/8/8/PP3PPP/6K1 w - - 0 1',
+          arrows: [['d6', 'c5'], ['g1', 'f1']],
+          highlights: ['d6', 'g1'],
+          caption: 'Same pawns, very different kings. Black\'s king on d6 is ready to march forward and attack; White\'s king on g1 is still asleep in the corner.',
+        },
+        {
+          type: 'tip',
+          title: 'Rule of thumb',
+          md: md(`
+            **When the queens come off, bring your king to the centre.** In a pawn endgame, the side with the more active king usually wins. Count moves: whose king gets to the important squares first?
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-end-king-ex1',
+            prompt: 'Black\'s pawn on d4 has gone too far and has no protection. White to move: use your king to win it.',
+            fen: '8/pp2kppp/8/8/3p4/8/PPP1KPPP/8 w - - 0 1',
+            solution: ['Kd3'],
+            hint: 'Walk your king straight towards the pawn, before the black king can come to defend it.',
+            explanation: 'Kd3! attacks the pawn at once. The black king on e7 is two moves away from defending it, so the pawn falls within a move or two (if it runs with ...d3, Kxd3). The king is the perfect piece for hunting loose pawns in the endgame.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-end-king-ex2',
+            prompt: 'White\'s passed pawn on d5 is dangerous, but White\'s king is not protecting it yet. Black to move.',
+            fen: '8/pp2kppp/8/3P4/8/8/PP2KPPP/8 b - - 0 1',
+            solution: ['Kd6'],
+            hint: 'Your king can reach the pawn in two moves. White\'s king needs two moves to protect it. Who moves first?',
+            explanation: '...Kd6! attacks the pawn, and next move ...Kxd5 wins it, because the white king cannot reach c4, d4 or e4 in time. A slower move like ...h5 would let White play Kd3 and Kd4, and then the passed pawn would be a monster.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-end-passed',
+      title: 'Passed pawns',
+      summary: 'A pawn with no enemy pawns in its way can become a queen. Push it, and support it with your king.',
+      estMinutes: 9,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            A **passed pawn** is a pawn with **no enemy pawns in front of it**, on its own file or on the files next to it. Nothing but pieces can stop it from walking to the end of the board and becoming a queen.
+
+            In the endgame, a passed pawn is often worth much more than one point. The other side has to use a piece, sometimes even the king, just to stop it.
+
+            ### Three ideas to remember
+
+            1. **Passed pawns must be pushed.** Every step forward makes the pawn more dangerous.
+            2. **The king is the pawn\'s best bodyguard.** Put your king next to or in front of the pawn and walk it home together.
+            3. **You can create a passed pawn** by trading or sacrificing pawns, even when there is none on the board yet.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '8/5ppp/8/1P6/8/8/5PPP/8 w - - 0 1',
+          highlights: ['b6', 'b7', 'b8'],
+          arrows: [['b5', 'b8']],
+          caption: 'The pawn on b5 is passed: no black pawn on the a-, b- or c-file can ever block or capture it.',
+        },
+        {
+          type: 'text',
+          md: md(`
+            ### The breakthrough
+
+            Sometimes three pawns face three pawns and nobody seems to have a passed pawn. But if the pawns are close to promotion, a clever **pawn sacrifice** can force one through. This trick is called a **breakthrough**. You will meet it in the first exercise.
+          `),
+        },
+        {
+          type: 'tip',
+          title: 'Common mistake',
+          md: md(`
+            Do not push a passed pawn into the arms of the enemy king if your own king is far away. A lonely pawn is easy to capture. **Bring the king first**, then push.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-end-passed-ex1',
+            prompt: 'Both kings are far away. White to move: create a passed pawn with a breakthrough!',
+            fen: '7k/ppp5/8/PPP5/8/8/8/7K w - - 0 1',
+            solution: ['b6', 'axb6', 'c6'],
+            hint: 'Sacrifice the middle pawn first. Then push the pawn that is no longer blocked.',
+            explanation: 'b6! and after ...axb6, c6! Now ...bxc6 allows a6, and the a-pawn queens; if Black ignores it, cxb7 and the pawn on b7 queens. (After ...cxb6, a6! works the same way.) Two pawns were given away so that the third one can become a queen, and the black king is far too slow to stop it.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-end-passed-ex2',
+            prompt: 'Your king supports your c-pawn. White to move: get the pawn to the 8th rank.',
+            fen: '2k5/8/1KP5/8/8/8/8/8 w - - 0 1',
+            solution: ['c7', 'Kd7', 'Kb7'],
+            hint: 'Push the pawn while your king protects it, then use the king to guard the promotion square.',
+            explanation: 'c7! is protected by the king, so Black cannot take it. After ...Kd7, Kb7! guards c8, and next move the pawn becomes a queen. The king and pawn worked as a team: the king protects, the pawn advances.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-end-square',
+      title: 'The rule of the square',
+      summary: 'A quick way to tell whether a king can catch a passed pawn, without counting every move.',
+      estMinutes: 8,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            Imagine a passed pawn running towards the end of the board, with only the enemy king to stop it. Can the king catch it? You could count every move, but there is a faster trick: **the rule of the square**.
+
+            ### How to draw the square
+
+            1. Draw a line from the pawn to its **promotion square**.
+            2. Use that line as one side of a **square** on the board, drawn towards the enemy king.
+            3. If the king is **inside the square**, or can **step into it on its move**, it catches the pawn. If not, the pawn promotes.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '8/8/8/6k1/1P6/8/8/7K w - - 0 1',
+          highlights: ['b4', 'c4', 'd4', 'e4', 'f4', 'f5', 'f6', 'f7', 'f8', 'b8', 'c8', 'd8', 'e8', 'b5', 'b6', 'b7'],
+          caption: 'The square of the b4-pawn runs from b4 to f4, f8 and b8. If it is Black\'s move, the king steps into the square (to f4, f5 or f6) and catches the pawn.',
+        },
+        {
+          type: 'text',
+          md: md(`
+            When the pawn moves forward, **the square shrinks**. That is why the side to move matters so much. In the diagram, if it is **White\'s** move, b4-b5 makes the square smaller (b5 to e5, e8 and b8), and the black king on g5 can no longer step into it.
+          `),
+        },
+        {
+          type: 'tip',
+          title: 'Watch out: the first pawn move',
+          md: md(`
+            A pawn on its **starting square** can move two squares at once. So for a pawn on the 2nd rank (or the 7th rank for Black), draw the square as if the pawn were **already one square further forward**.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-end-square-ex1',
+            prompt: 'White\'s a-pawn is running for a8. Black to move: catch it!',
+            fen: '8/8/8/8/P7/5k2/8/7K b - - 0 1',
+            solution: ['Ke4', 'a5', 'Kd5', 'a6', 'Kc6', 'a7', 'Kb7'],
+            hint: 'The square of the a4-pawn runs from a4 to e4, e8 and a8. Step into it, and stay inside it every move.',
+            explanation: '...Ke4! is the only move that enters the square of the pawn. After that, the black king stays inside the shrinking square with every step (d5, c6, b7) and reaches the pawn in time. Any other first move, like ...Ke3, is one tempo too slow and the pawn queens.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-end-square-ex2',
+            prompt: 'White to move: should you push the pawn or bring the king? Use the rule of the square.',
+            fen: '8/8/8/6k1/1P6/8/8/7K w - - 0 1',
+            solution: ['b5'],
+            hint: 'If you push now, does the black king still fit into the new, smaller square?',
+            explanation: 'b5! shrinks the square to b5-e5-e8-b8. The black king on g5 cannot step into it in one move, so the pawn runs through to b8. Any other move lets the king step into the square of the b4-pawn (for example ...Kf4) and catch it.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-end-square-ex3',
+            prompt: 'White\'s pawn is still on its starting square. Black to move: catch it. Careful how you draw the square!',
+            fen: '8/8/8/7K/8/8/P5k1/8 b - - 0 1',
+            solution: ['Kf3'],
+            hint: 'The pawn can jump to a4 in one move, so draw the square from a3, not from a2.',
+            explanation: '...Kf3! enters the square of a3 (a3-f3-f8-a8). If you drew the square from a2, you might think ...Kg3 is fine too, but after a2-a4 the king would be one step too slow. Always remember the two-square first move!',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-end-opposition',
+      title: 'King and pawn against king: the opposition',
+      summary: 'When the kings stand face to face, the side that does NOT have to move holds the advantage.',
+      estMinutes: 10,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            King and one pawn against a lone king is the most important endgame of all, because so many games turn into it. Sometimes it is a win and sometimes a draw, and the difference often comes down to one idea: **the opposition**.
+
+            ### What is the opposition?
+
+            The kings stand on the same file (or rank) with **one square between them**. Neither king may step next to the other, so they block each other. The player who must move has to **give way**, and the other king gets through.
+
+            We say the side that has **just moved** into this position *has the opposition*. It is like a game of chicken where the one who must move loses.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '8/4k3/8/4K3/4P3/8/8/8 w - - 0 1',
+          arrows: [['e5', 'e7']],
+          highlights: ['d6', 'e6', 'f6'],
+          caption: 'The kings face each other with one square between them. It is White\'s move, so Black has the opposition and keeps the white king out of d6, e6 and f6. With correct play this is a draw.',
+        },
+        {
+          type: 'text',
+          md: md(`
+            ### Rules for the attacker (the side with the pawn)
+
+            - Put your king **in front of the pawn**, not behind it.
+            - Use the opposition to push the enemy king aside.
+            - A king on the **6th rank in front of its pawn** wins, whoever is to move (except with an edge pawn on the a- or h-file).
+
+            ### Rules for the defender
+
+            - Keep your king **in front of the pawn**.
+            - When the enemy king comes close, **take the opposition**.
+            - If the pawn reaches the 7th rank with check, go to the square **in front of the pawn**, never to the side, and hope for stalemate.
+          `),
+        },
+        {
+          type: 'line',
+          fen: '4k3/8/4K3/4P3/8/8/8/8 w - - 0 1',
+          moves: ['Kd6', 'Kd8', 'e6', 'Ke8', 'e7', 'Kf7', 'Kd7', 'Kf6', 'e8=Q'],
+          caption: 'King on the 6th rank in front of the pawn: a textbook win.',
+          notes: {
+            1: 'The king steps beside the pawn\'s path and guards d7 and e7, the squares in front of the pawn.',
+            2: 'Black takes the opposition, but it is too late: the white king already controls the squares in front of the pawn.',
+            3: 'The pawn moves up, protected by the king.',
+            5: 'The pawn reaches the 7th rank, guarded by the king on d6. Black still has a legal move, so there is no stalemate.',
+            6: 'The black king must leave the queening square.',
+            7: 'The king guards e8 and the pawn walks in.',
+            9: 'A new queen. Now you already know how to checkmate with queen and king.',
+          },
+        },
+        {
+          type: 'tip',
+          title: 'Stalemate alarm',
+          md: md(`
+            With king and pawn against king, the defender\'s last hope is **stalemate**. Before every move near the corner or the edge, check that the lonely king still has a legal move after you play.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-end-opp-ex1',
+            prompt: 'You are defending. Black to move: find the only move that draws.',
+            fen: '8/5k2/8/4K3/4P3/8/8/8 b - - 0 1',
+            solution: ['Ke7', 'Kd5', 'Kd7'],
+            hint: 'Face the white king with one square between you, and keep doing it.',
+            explanation: '...Ke7! takes the opposition. When White steps to the side with Kd5, Black follows with ...Kd7! and keeps the opposition again. The white king can never reach d6, e6 or f6, so the game is a draw. Any other first move lets the white king through to the 6th rank.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-end-opp-ex2',
+            prompt: 'White to move: take the opposition and win.',
+            fen: '8/8/8/4k3/8/3K4/4P3/8 w - - 0 1',
+            solution: ['Ke3'],
+            hint: 'Put your king directly opposite the black king, with one square between them. Then it is Black who must give way.',
+            explanation: 'Ke3! takes the opposition. Now Black must move and give way: if ...Kd5, then Kf4 and the white king gets in front of the pawn; if ...Kf5, then Kd4. With the white king in front of the pawn, the win is easy. Pushing the pawn first, with e3 or e4, would let Black hold the draw.',
+          },
+        },
+      ],
+    },
+  ],
+}
+
+// ---------------------------------------------------------------------------
+// Module 6 · How to think during a game
+// ---------------------------------------------------------------------------
+
+const thinkingModule: Module = {
+  id: 'l2-thinking',
+  level: 2,
+  title: 'How to Think During a Game',
+  description: 'A simple routine for choosing moves, plus what to do when you are ahead and when you are behind.',
+  lessons: [
+    {
+      id: 'l2-think-routine',
+      title: 'A move-selection routine',
+      summary: 'Three questions to ask every move: what is the threat, what are my candidates, and is my move safe?',
+      estMinutes: 10,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            You now know a lot of chess: opening principles, how not to hang pieces, basic mates, tactics and endgames. But in a real game nobody tells you "find the fork!". You have to **notice** it yourself, and you also have to notice your opponent\'s ideas.
+
+            The answer is a **routine**: the same short list of questions, every single move. At first it feels slow. After a few weeks it becomes a habit, and your results jump.
+
+            ### The routine
+
+            1. **What does my opponent threaten?** Look at the move they just played. What does it attack? Is there a check, a capture or a mate threat coming?
+            2. **What are my candidate moves?** Look first at **checks, captures and threats**, for you. Then at good developing or improving moves. Pick two or three candidates.
+            3. **Blunder check.** Before you touch the piece, imagine your move on the board and ask: what checks, captures and threats does my opponent have *now*?
+          `),
+        },
+        {
+          type: 'line',
+          fen: 'r4rk1/p1p2ppp/3b4/8/7q/5B2/PPPNQPPP/5RK1 w - - 0 1',
+          moves: ['Bxa8', 'Qxh2#'],
+          caption: 'What happens when you skip step 1.',
+          notes: {
+            1: 'White grabs the rook on a8, without asking what Black was threatening.',
+            2: 'Checkmate. The queen and the bishop on d6 were both aiming at h2. One question, "What does my opponent threaten?", would have saved the game.',
+          },
+        },
+        {
+          type: 'tip',
+          title: 'Forcing moves first',
+          md: md(`
+            When you look for candidate moves, start with **checks, then captures, then threats**. These forcing moves give your opponent the fewest choices, so they are the easiest to calculate and the most likely to win something.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-think-routine-ex1',
+            prompt: 'The black rook on a8 is attacked by your bishop. But first, step 1: what is Black threatening? White to move.',
+            fen: 'r4rk1/p1p2ppp/3b4/8/7q/5B2/PPPNQPPP/5RK1 w - - 0 1',
+            solution: ['g3'],
+            hint: 'Black\'s queen and bishop both aim at h2. Find a defence that also attacks something.',
+            explanation: 'g3! blocks the bishop\'s diagonal and attacks the queen at the same time, so Black has no time for anything else. The bishop still attacks the rook on a8, so White can win the exchange next move with Bxa8. Defend first, then grab.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-think-routine-ex2',
+            prompt: 'Black threatens ...Qe1#. But it is your move, and checks come first. White to move: checkmate in one.',
+            fen: '5rk1/pp3p1p/5QpB/q7/8/8/PP3PPP/6K1 w - - 0 1',
+            goal: 'mate',
+            solution: ['Qg7#'],
+            hint: 'Look at every check you have. Which one is protected by your bishop?',
+            explanation: 'Qg7# is mate: the queen is protected by the bishop on h6, and the black king has no squares. If White had only looked at defending against ...Qe1#, this would have been missed. **Always check your own checks first.**',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-think-routine-ex3',
+            prompt: 'Black\'s bishop on d4 can be taken by your queen or your knight. Do the blunder check before you choose. White to move.',
+            fen: '5rk1/ppq2ppp/8/4n3/3b4/1N4P1/PPP2P1P/3Q1RK1 w - - 0 1',
+            solution: ['Nxd4'],
+            hint: 'Imagine each capture on the board. After Qxd4, which black knight move gives check?',
+            explanation: 'Nxd4 wins the bishop safely. Qxd4?? looks just as good, but after it Black plays ...Nf3+, a royal fork of the king and the queen, and White loses the queen. Nothing can capture on f3, because the g-pawn is no longer on g2. The blunder check catches exactly this kind of trick.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-think-ahead',
+      title: 'Trading when you are ahead',
+      summary: 'Up material? Trade pieces, keep it simple, and let your extra material win the endgame.',
+      estMinutes: 7,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            You have won a piece. Congratulations! Now you have to **win the game**, and many players throw the advantage away by getting careless or by letting the opponent build an attack.
+
+            The simplest plan: **trade pieces**.
+
+            ### Why trading helps the side that is ahead
+
+            - Being a piece up with **few pieces left** is a much bigger advantage than being a piece up with everything still on the board. 3 against 0 is easier than 23 against 20.
+            - Every trade removes an enemy piece that could attack your king or set a trap.
+            - Trading **queens** is especially good, because the queen is the opponent\'s best piece for tricks, checks and swindles.
+
+            ### What NOT to trade
+
+            Trade **pieces**, not **pawns**. Pawns are what you will promote in the endgame. If you trade off all the pawns, even an extra piece might not be enough to mate.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '3r4/4kppp/8/8/8/2N5/5PPP/3R2K1 w - - 0 1',
+          arrows: [['d1', 'd8']],
+          highlights: ['d8'],
+          caption: 'White is a knight ahead. Rxd8 Kxd8 trades off the last pair of rooks. Then Black has nothing left to fight with, and the white king and knight will win the endgame.',
+        },
+        {
+          type: 'tip',
+          title: 'Rule of thumb',
+          md: md(`
+            **When ahead, trade pieces. When behind, avoid trades.** Before every trade, ask yourself: "Does this trade make my advantage bigger or smaller?"
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-think-ahead-ex1',
+            prompt: 'You are a whole rook ahead. White to move: find the move that trades queens at once.',
+            fen: '6k1/ppp2pp1/3q3p/8/8/8/PPPQ1PPP/4R1K1 w - - 0 1',
+            solution: ['Qxd6'],
+            hint: 'The black queen is defended only by a pawn. Offer the trade by capturing it.',
+            explanation: 'Qxd6! cxd6 removes Black\'s only dangerous piece. Now White has a rook against nothing, and can calmly bring the rook and the king into the game and promote a pawn. No queen, no tricks.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-think-ahead-ex2',
+            prompt: 'You are a pawn up. White to move: trade into an endgame where your extra pawn decides.',
+            fen: '3r4/pp2kpp1/8/8/8/8/PP3PPP/3R1K2 w - - 0 1',
+            solution: ['Rxd8'],
+            hint: 'With only kings and pawns left, an extra pawn usually wins. Which trade gets you there?',
+            explanation: 'Rxd8! Kxd8 leads to a pawn endgame with an extra pawn for White. White has three pawns against two on the kingside, so sooner or later a passed pawn appears there, and the black king cannot stop it and defend the queenside at the same time. With the rooks still on, Black would have far more chances to fight back.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-think-behind',
+      title: 'When you are behind: keep fighting',
+      summary: 'A worse position is not a lost game. Look for checks, tricks, perpetual check and stalemate.',
+      estMinutes: 8,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            Everybody loses material sometimes. The question is what you do next. Players at your level resign far too early, and they give away lots of half-points and even full points by doing so.
+
+            ### How to play when you are behind
+
+            - **Do not trade pieces.** Every trade makes your opponent\'s job easier.
+            - **Keep pieces active** and look for **checks and threats**. Your opponent may relax now that they are winning.
+            - **Look for a fork or a pin** that wins the material back.
+            - **Look for a draw**: **perpetual check** (checking forever, so the game is drawn) or **stalemate**.
+          `),
+        },
+        {
+          type: 'line',
+          fen: 'k7/p7/2p5/4Q3/6n1/7p/5q1P/7K w - - 0 1',
+          moves: ['Qb8+', 'Kxb8'],
+          caption: 'A stalemate swindle: White is about to be mated, but finds a way out.',
+          notes: {
+            1: 'Black threatens ...Qxh2#. White offers the queen with check, and Black has to take it.',
+            2: 'Stalemate! White is not in check, but the king has no squares and the h2-pawn is blocked. The game is a draw.',
+          },
+        },
+        {
+          type: 'tip',
+          title: 'Perpetual check',
+          md: md(`
+            If your queen can keep checking the enemy king and it can never escape the checks, the game is a draw by **repetition**. When you are losing, perpetual check is a lifesaver. Look for a king with few defenders and no pawn shelter.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-think-behind-ex1',
+            prompt: 'You are a rook down and Black threatens to mate your king. White to move: save the game with checks.',
+            fen: '6k1/6p1/4p3/7Q/8/8/1qr2PPP/7K w - - 0 1',
+            solution: ['Qe8+', 'Kh7', 'Qh5+'],
+            hint: 'Check from e8. After the king hides on h7, check it again along the h-file.',
+            explanation: 'Qe8+ Kh7 Qh5+ Kg8 Qe8+ and so on: the black king can only shuffle between g8 and h7, and Black cannot block the checks. White repeats the position and the game is drawn by **perpetual check**. Any quiet move would have let Black mate.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-think-behind-ex2',
+            prompt: 'You are a rook down. Black to move: find the trick that wins your material back.',
+            fen: '3r2k1/pp3ppp/8/8/3n4/8/PP3PPP/R3K1NR b - - 0 1',
+            solution: ['Nc2+', 'Ke2', 'Nxa1'],
+            hint: 'Your knight can check the king and attack the rook on a1 at the same time.',
+            explanation: '...Nc2+! is a royal fork of the king and the rook on a1. The king cannot go to d1 or d2 because of your rook on d8, and after it moves, ...Nxa1 wins the rook back. Black is back in the game. Never stop looking for tactics, especially when you are behind!',
+          },
+        },
+      ],
+    },
+  ],
+}
+
+export const level2: Module[] = [openingModule, safetyModule, matesModule, tacticsModule, endgameModule, thinkingModule]
