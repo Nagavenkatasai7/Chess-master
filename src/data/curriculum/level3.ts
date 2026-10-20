@@ -1436,4 +1436,201 @@ export const level3: Module[] = [
       },
     ],
   },
+  // ─────────────────────────── 6. ATTACKING THE KING ───────────────────────────
+  {
+    id: 'l3-attack',
+    level: 3,
+    title: 'Attacking the king',
+    description:
+      'When an attack is justified, how to bring more attackers than there are defenders, opposite-side castling with pawn storms, and sacrifices that tear open the lines to the king.',
+    lessons: [
+      {
+        id: 'l3-attack-when',
+        title: 'When to attack: more attackers than defenders',
+        summary: 'An attack needs a reason. Learn the signs, then watch Lasker throw everything at the king.',
+        estMinutes: 18,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "A king attack is the most exciting thing in chess, but an attack without a reason usually fails and leaves you with a ruined position. Before you launch one, look for these signs:\n\n" +
+              "1. **More attackers than defenders.** Count the pieces that can join the attack quickly and the pieces that can defend. If you can bring three pieces against two defenders, sacrifices start to work.\n" +
+              "2. **A lead in development.** Your pieces are out; the opponent's are still at home.\n" +
+              "3. **Weaknesses around the king**: missing or advanced pawns, holes like f6 or h6, a missing fianchetto bishop.\n" +
+              "4. **A stable centre.** If the centre is closed or under your control, your opponent cannot hit back there. An attack on the wing with an open, unstable centre is risky.\n\n" +
+              "**Rule of thumb:** attack where you are stronger, and attack with *pieces*, not just one or two of them. A lone queen rarely mates anyone.",
+          },
+          {
+            type: 'text',
+            md:
+              "### Lasker's double bishop sacrifice\n\n" +
+              "Emanuel Lasker, World Champion for 27 years, played one of the most famous attacks in history against Johann Bauer in Amsterdam, 1889. White has bishops aimed at both g7 and h7, a queen ready to swing to the kingside and a rook that can join along the third rank. Black's knight has just taken on h5, and Black's pieces are far from his king.",
+          },
+          {
+            type: 'line',
+            moves: ['f4', 'd5', 'e3', 'Nf6', 'b3', 'e6', 'Bb2', 'Be7', 'Bd3', 'b6', 'Nc3', 'Bb7', 'Nf3', 'Nbd7', 'O-O', 'O-O', 'Ne2', 'c5', 'Ng3', 'Qc7', 'Ne5', 'Nxe5', 'Bxe5', 'Qc6', 'Qe2', 'a6', 'Nh5', 'Nxh5', 'Bxh7+', 'Kxh7', 'Qxh5+', 'Kg8', 'Bxg7', 'Kxg7', 'Qg4+', 'Kh7', 'Rf3', 'e5', 'Rh3+', 'Qh6', 'Rxh6+', 'Kxh6', 'Qd7', 'Bf6', 'Qxb7'],
+            caption: 'Lasker – Bauer, Amsterdam 1889.',
+            notes: {
+              23: 'Both white bishops now aim at the black king.',
+              27: 'The knight is offered to deflect the black knight from f6.',
+              29: 'The first bishop sacrifice destroys the h7-pawn.',
+              31: 'The queen recaptures with check and joins the attack.',
+              33: 'The second bishop sacrifice! The g7-pawn disappears too.',
+              37: 'The decisive idea: the rook joins the attack along the third rank, threatening Rh3 mate.',
+              40: 'Black must give up his queen to stop the mate.',
+              43: 'A double attack on the e7-bishop and the b7-bishop.',
+              45: 'White has won material and keeps attacking. Lasker won soon afterwards.',
+            },
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l3-attack-when-ex1',
+              prompt: 'Lasker – Bauer after 14...Nxh5. White to move: start the double bishop sacrifice.',
+              fen: 'r4rk1/1b2bppp/ppq1p3/2ppB2n/5P2/1P1BP3/P1PPQ1PP/R4RK1 w - - 0 15',
+              solution: ['Bxh7+', 'Kxh7', 'Qxh5+', 'Kg8', 'Bxg7'],
+              hint: 'First the bishop on d3 takes on h7, then the queen recaptures the knight, then the other bishop goes.',
+              explanation:
+                "15.Bxh7+! Kxh7 16.Qxh5+ Kg8 17.Bxg7! strips away both pawns in front of the king. If Black takes (17...Kxg7), 18.Qg4+ and 19.Rf3 bring a fresh attacker with a deadly threat on the h-file. The sacrifices worked because White could bring queen and rook faster than Black could bring defenders.",
+            },
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l3-attack-when-ex2',
+              prompt: 'Lasker – Bauer after 19...e5. The rook has joined the attack. White to move.',
+              fen: 'r4r2/1b2bp1k/ppq5/2ppp3/5PQ1/1P2PR2/P1PP2PP/R5K1 w - - 0 20',
+              solution: ['Rh3+', 'Qh6', 'Rxh6+'],
+              hint: 'Check on the h-file. Black has only one way to avoid mate.',
+              explanation:
+                "20.Rh3+ Qh6 21.Rxh6+ Kxh6: blocking with the queen was the only way to avoid a quick mate, so Black has had to give it up. Lasker then finished with 22.Qd7!, a double attack on both black bishops. Counting attackers against defenders explains everything: queen and rook against a king with no pawns and no defending pieces nearby.",
+            },
+          },
+        ],
+      },
+      {
+        id: 'l3-attack-opposite',
+        title: 'Opposite-side castling and pawn storms',
+        summary: 'When the kings are on opposite wings, it is a race: throw your pawns forward to open lines.',
+        estMinutes: 16,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "When both players castle on the **same** side, pushing the pawns in front of the enemy king also weakens your own king. But when the kings are on **opposite** sides, you can storm with your pawns freely: they do not shelter your own king.\n\n" +
+              "The result is usually a **race**. Whoever opens lines against the enemy king first wins.\n\n" +
+              "- Push the pawns in front of the enemy king to **open files** for your rooks and queen.\n" +
+              "- **Trade off the key defender**, for example a fianchetto bishop on g7.\n" +
+              "- Every tempo counts: do not waste moves defending if your attack is faster.\n" +
+              "- Pawn sacrifices that open a file are often worth it.",
+          },
+          {
+            type: 'line',
+            moves: ['e4', 'c5', 'Nf3', 'd6', 'd4', 'cxd4', 'Nxd4', 'Nf6', 'Nc3', 'g6', 'Be3', 'Bg7', 'f3', 'O-O', 'Qd2', 'Nc6', 'Bc4', 'Bd7', 'O-O-O', 'Rc8', 'Bb3', 'Ne5', 'h4', 'Nc4', 'Bxc4', 'Rxc4', 'h5', 'Nxh5', 'g4', 'Nf6', 'Bh6'],
+            caption: 'The Yugoslav Attack against the Dragon: a classic race.',
+            notes: {
+              14: 'Black has castled kingside.',
+              19: 'White castles on the other side. Now the race begins.',
+              20: 'Black aims at the c-file and the white king.',
+              23: 'The h-pawn marches towards the black king.',
+              27: 'A pawn sacrifice to open the h-file.',
+              29: 'Another pawn chases the knight away from h5.',
+              31: 'White offers to trade the Dragon bishop, Black\'s best defender. Black has counterplay with ...Rxc3 and ...Nxe4, so both sides must play precisely.',
+            },
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l3-attack-opposite-ex1',
+              prompt: 'White to move. Use a pawn to attack the only defender of h7.',
+              fen: 'r2q1rk1/pb3ppp/1p2pn2/8/4P1PQ/2NB4/PPP5/2KR3R w - - 0 1',
+              solution: ['g5'],
+              hint: 'The knight on f6 is the only piece guarding h7. Your queen and bishop already aim there.',
+              explanation:
+                "1.g5! hits the knight. If it moves (1...Nd7, 1...Ne8 or 1...Nd5), 2.Qxh7# follows, because the queen and bishop outnumber the defenders of h7. After 1...Nh5 2.Qxh5 Black is simply a piece down, and after 1...h6 White wins material too. This is the point of a pawn storm: pawns gain time by attacking defenders.",
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### Trade the fianchetto bishop\n\n" +
+              "A bishop on g7 protects the dark squares around the king (f6, h6 and h8). In opposite-side castling positions, White often plays Be3, Qd2 and Bh6 to exchange it. Once it is gone and the h-file is open, the queen can arrive on h6 and h7.",
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l3-attack-opposite-ex2',
+              prompt: 'White to move. The h-file is open. Remove the key defender and keep the initiative.',
+              fen: '2r2rk1/pp1bppb1/3p2pB/q7/4P1P1/2N2P2/PPPQ4/1K1R3R w - - 0 1',
+              solution: ['Bxg7', 'Kxg7', 'Qh6+', 'Kf6', 'Nd5+'],
+              hint: 'Exchange bishops, then the queen goes to h6 with check. Where can the king run, and how can a knight punish it?',
+              explanation:
+                "1.Bxg7! Kxg7 2.Qh6+ and the king has no good square: 2...Kg8 3.Qh7# is mate along the open h-file, so 2...Kf6 is forced, and 3.Nd5+! leaves Black no safe square for the king: he must give up his queen with 3...Qxd5 4.exd5. The pawn storm had opened the h-file; trading the Dragon bishop did the rest.",
+            },
+          },
+        ],
+      },
+      {
+        id: 'l3-attack-lines',
+        title: 'Opening lines: sacrifices against the king',
+        summary: 'Destroy the defenders and open files with exchange sacrifices and rook sacrifices.',
+        estMinutes: 14,
+        blocks: [
+          {
+            type: 'text',
+            md:
+              "Very often the attacker has enough pieces near the king, but a defender or a pawn is in the way. Then a sacrifice can **open lines** or **remove the defender**:\n\n" +
+              "- An **exchange sacrifice** (rook for knight or bishop) to eliminate a knight on f6, the classic defender of h7.\n" +
+              "- A **rook sacrifice** on h8 to drag the king into the corner, so the queen arrives with check.\n" +
+              "- **Pawn breaks** (g4-g5, h4-h5) that open files towards the king.\n\n" +
+              "Before you sacrifice, count again: **after the sacrifice, will I have more attackers than he has defenders?** If yes, look for the forcing moves.",
+          },
+          {
+            type: 'board',
+            fen: 'r4rk1/ppq2ppp/2p2n2/8/3P3Q/3B4/PP4PP/4RRK1 w - - 0 1',
+            caption: 'Queen and bishop attack h7; only the knight on f6 defends it. The rook on f1 can remove that knight.',
+            arrows: [['h4', 'h7'], ['d3', 'h7'], ['f1', 'f6']],
+            highlights: ['h7'],
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l3-attack-lines-ex1',
+              prompt: 'White to move. Remove the defender of h7.',
+              fen: 'r4rk1/ppq2ppp/2p2n2/8/3P3Q/3B4/PP4PP/4RRK1 w - - 0 1',
+              solution: ['Rxf6'],
+              hint: 'An exchange sacrifice: give a rook for the knight that guards h7.',
+              explanation:
+                "1.Rxf6! If 1...gxf6, 2.Qxh7# is mate at once: the queen is protected by the bishop. Black's best is 1...g6, but then White has simply won a piece and keeps a lasting attack on the dark squares. Two attackers (queen and bishop) against one defender: remove the defender and h7 falls.",
+            },
+          },
+          {
+            type: 'text',
+            md:
+              "### The rook sacrifice on h8\n\n" +
+              "When the h-file is open and a knight controls h7, a rook check on h8 can drag the king into the corner. Then the queen comes to the h-file **with check**, and the defender never gets a free move.",
+          },
+          {
+            type: 'exercise',
+            exercise: {
+              id: 'l3-attack-lines-ex2',
+              prompt: 'White to move: mate in 3.',
+              fen: 'r4rk1/pb1q1pp1/1p2p3/6N1/8/7R/PP3PP1/3Q2K1 w - - 0 1',
+              goal: 'mate',
+              solution: ['Rh8+', 'Kxh8', 'Qh5+', 'Kg8', 'Qh7#'],
+              hint: 'Sacrifice the rook to bring the queen to the h-file with check.',
+              explanation:
+                "1.Rh8+! Kxh8 (h7 is covered by the knight) 2.Qh5+ Kg8 3.Qh7#. The knight on g5 protects the queen, and Black's own rook and pawns block the king. Note that the slower 1.Qh5? lets Black hit back with 1...Qd1+.",
+            },
+          },
+          {
+            type: 'tip',
+            title: 'Keep the initiative',
+            md:
+              "In an attack, **forcing moves** (checks, captures and threats) are your best friends. Each one leaves your opponent only a few replies, so you can calculate further, and it gives him no time to bring in defenders or start a counterattack. If your attack slows down to quiet moves, check that the opponent cannot strike back first.",
+          },
+        ],
+      },
+    ],
+  },
 ]
