@@ -417,4 +417,309 @@ const openingModule: Module = {
   ],
 }
 
-export const level2: Module[] = [openingModule]
+
+// ---------------------------------------------------------------------------
+// Module 2 · Don't hang your pieces
+// ---------------------------------------------------------------------------
+
+const safetyModule: Module = {
+  id: 'l2-safety',
+  level: 2,
+  title: 'Don\'t Hang Your Pieces',
+  description: 'Stop giving away material: spot loose pieces, count attackers and defenders, and run a quick blunder check before every move.',
+  lessons: [
+    {
+      id: 'l2-safe-hanging',
+      title: 'What is a hanging piece?',
+      summary: 'A piece that can be taken for free is "hanging". Learn to see them, yours and your opponent\'s.',
+      estMinutes: 7,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            Most games between beginners are not decided by clever plans. They are decided by **pieces left for free**. A piece that can be captured without anything being given back is called a **hanging** piece (or an *undefended* or *loose* piece).
+
+            If you simply stop hanging pieces, and start taking the ones your opponent hangs, you will win far more games. It really is that simple, and that hard!
+
+            ### First, know what things are worth
+
+            - Pawn = **1**
+            - Knight = **3**
+            - Bishop = **3**
+            - Rook = **5**
+            - Queen = **9**
+            - King = priceless (you can never trade it)
+          `),
+        },
+        {
+          type: 'board',
+          fen: 'r1r3k1/pp2qppp/5n2/8/3b4/2N5/PP3PPP/R2Q1RK1 w - - 0 1',
+          arrows: [['d1', 'd4']],
+          highlights: ['d4'],
+          caption: 'Black\'s bishop on d4 is attacked by the white queen, and no black piece protects it. It is hanging.',
+        },
+        {
+          type: 'text',
+          md: md(`
+            ### How to spot a hanging piece
+
+            For every enemy piece, ask two questions:
+
+            1. **Is it attacked?** Can one of my pieces capture it?
+            2. **Is it defended?** If I capture, can my opponent capture back?
+
+            If the answers are "yes" and "no", the piece is hanging: take it! Do the same check for **your own** pieces, so your opponent never gets the chance.
+          `),
+        },
+        {
+          type: 'tip',
+          title: 'Loose pieces drop off',
+          md: md(`
+            Strong players have a saying: **"Loose pieces drop off."** A piece with no defender is a target, even if nothing attacks it yet. When you can, keep your pieces protected by a pawn or another piece.
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-safe-hanging-ex1',
+            prompt: 'Black has just put a bishop on d4. Is it safe? White to move.',
+            fen: 'r1r3k1/pp2qppp/5n2/8/3b4/2N5/PP3PPP/R2Q1RK1 w - - 0 1',
+            solution: ['Qxd4'],
+            hint: 'Ask the two questions about the bishop on d4: is it attacked, and is it defended?',
+            explanation: 'Qxd4 wins a whole bishop. Nothing defends d4: the knight on f6 and the queen on e7 do not reach it. Free material is the easiest way to win a game.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-safe-hanging-ex2',
+            prompt: 'White\'s knight has jumped into e5. Black to move: find the free piece.',
+            fen: 'r4rk1/pbq2ppp/1p2pn2/4N3/2B5/8/PP3PPP/R2Q1RK1 b - - 0 1',
+            solution: ['Qxe5'],
+            hint: 'Which white piece is attacked by your queen? Does anything protect it?',
+            explanation: '...Qxe5 wins a knight for nothing. A knight in the centre looks scary, but with no pawn or piece behind it, it is just a loose piece waiting to be taken.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-safe-count',
+      title: 'Count attackers and defenders',
+      summary: 'When a piece is defended, count who can capture on that square, and capture with your cheapest piece first.',
+      estMinutes: 9,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            Often a piece is attacked **and** defended. Can you still win it? You find out by **counting**.
+
+            - Count how many of your pieces **attack** the square.
+            - Count how many enemy pieces **defend** it.
+            - If you have **more attackers than they have defenders**, you can usually win something.
+
+            But the order matters too. Every capture is a trade, so think about the **value** of what you give and what you get.
+          `),
+        },
+        {
+          type: 'board',
+          fen: '5rk1/ppp2ppp/2n5/4p3/8/3B1N2/PPP2PPP/4R1K1 w - - 0 1',
+          arrows: [['f3', 'e5'], ['e1', 'e5'], ['c6', 'e5']],
+          highlights: ['e5'],
+          caption: 'The pawn on e5 is attacked twice (knight and rook) and defended once (knight). Two attackers beat one defender.',
+        },
+        {
+          type: 'line',
+          fen: '5rk1/ppp2ppp/2n5/4p3/8/3B1N2/PPP2PPP/4R1K1 w - - 0 1',
+          moves: ['Nxe5', 'Nxe5', 'Rxe5'],
+          caption: 'Capturing in the right order: cheapest piece first.',
+          notes: {
+            1: 'White starts with the knight, the cheaper of the two attackers. So far White has won a pawn.',
+            2: 'Black recaptures: knight for knight.',
+            3: 'The rook takes last. White has won a pawn and nothing can take back. If White had started with the rook, Black would win the rook for a knight!',
+          },
+        },
+        {
+          type: 'tip',
+          title: 'Rule of thumb',
+          md: md(`
+            **Capture with your least valuable piece first.** Pawns before minor pieces, minor pieces before rooks, rooks before the queen. And remember: if the enemy piece is worth **more** than the piece you capture with, taking it is good even if it is defended. A pawn may always take a defended knight!
+          `),
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-safe-count-ex1',
+            prompt: 'Black\'s bishop on e5 is defended by the knight on c6. Count, then win material. White to move.',
+            fen: '5rk1/ppp2ppp/2n5/4b3/8/3B1N2/PPP2PPP/4R1K1 w - - 0 1',
+            solution: ['Nxe5'],
+            hint: 'You have two attackers against one defender. Which of your attackers is cheaper?',
+            explanation: 'Nxe5! takes with the cheaper attacker. If ...Nxe5 Rxe5, White has won a bishop. Starting with Rxe5? would be a mistake: after ...Nxe5 Nxe5 you have given a rook (5) for a bishop and a knight, and wasted most of your advantage.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-safe-count-ex2',
+            prompt: 'Black\'s knight on e5 attacks your bishop and your knight. It is defended by a pawn. White to move: what should you do?',
+            fen: '3q1rk1/pppb1ppp/3p4/4n3/2BP4/2P2N2/PP3PPP/3Q1RK1 w - - 0 1',
+            solution: ['dxe5'],
+            hint: 'Something cheap can capture the knight. Does it matter that the knight is defended?',
+            explanation: 'dxe5! A pawn is worth 1 and a knight is worth 3. Even after ...dxe5, White has traded a pawn for a knight and is up two points. Nxe5? dxe5 would only be an even trade, knight for knight.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-safe-threats',
+      title: 'What does my opponent threaten?',
+      summary: 'Before you think about your own plans, ask what your opponent\'s last move is trying to do.',
+      estMinutes: 8,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            Here is the most important habit in chess: **after every move your opponent makes, ask "What does that move want?"**
+
+            A move can:
+
+            - **attack** one of your pieces,
+            - threaten a **check** or a **checkmate**,
+            - set up a **fork** or another trick,
+            - or open a line for another piece.
+
+            Beginners often look only at their own ideas, and then lose a piece to a threat that was obvious one move earlier. Do not let that be you!
+          `),
+        },
+        {
+          type: 'line',
+          moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Nf6', 'Ng5', 'd5', 'exd5', 'Na5'],
+          caption: 'Spotting a threat in a real opening.',
+          notes: {
+            7: 'What does this move want? The knight and the bishop both attack f7. White threatens Nxf7, forking Black\'s queen and rook.',
+            8: 'Black sees the threat and blocks the bishop\'s path to f7 with a pawn, while also hitting e4.',
+            9: 'White takes the pawn, and the bishop\'s line to f7 is closed for now.',
+            10: 'Black chases the bishop away from f7 by attacking it. Every move is a question and an answer.',
+          },
+        },
+        {
+          type: 'text',
+          md: md(`
+            ### When one of your pieces is attacked
+
+            You have four ways to answer:
+
+            1. **Capture the attacker**, if it is safe to do so. Often the best answer!
+            2. **Move the piece** to a *safe square*: one that no enemy piece attacks.
+            3. **Defend it**, if the trade would be fair.
+            4. **Block** the attack (against long-range pieces).
+
+            Check them in this order: capturing the attacker first, because it can win material.
+          `),
+        },
+        {
+          type: 'board',
+          fen: 'r2q1rk1/pbp2ppp/1p1p4/8/4Pn2/2N5/PPPBQPPP/R4RK1 w - - 0 1',
+          arrows: [['f4', 'e2'], ['d2', 'f4']],
+          highlights: ['f4'],
+          caption: 'Black\'s knight attacks the white queen. But the knight itself is attacked by the bishop on d2, and nothing defends it.',
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-safe-threats-ex1',
+            prompt: 'Black\'s last move ...Nf4 attacks your queen. White to move: what is the best answer?',
+            fen: 'r2q1rk1/pbp2ppp/1p1p4/8/4Pn2/2N5/PPPBQPPP/R4RK1 w - - 0 1',
+            solution: ['Bxf4'],
+            hint: 'Before you run away with the queen, look at the piece that is attacking her.',
+            explanation: 'Bxf4 captures the attacker, and it was undefended, so White wins a knight. Running away with the queen would have been safe, but it would have missed a free piece. **First check whether you can capture the attacker.**',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-safe-threats-ex2',
+            prompt: 'Black has just played ...b5, attacking your knight on a4. White to move: save the knight.',
+            fen: '2r3k1/p1p2ppp/3pbn2/1p6/N7/8/PPP2PPP/2BR2K1 w - - 0 1',
+            solution: ['Nc3'],
+            hint: 'Check every square the knight can go to. Which one is not attacked by a black pawn?',
+            explanation: 'Nc3 is the only safe square. b6 is covered by the a7- and c7-pawns, c5 by the d6-pawn, and b2 holds your own pawn. A knight on the edge has few squares, which is exactly why "a knight on the rim is dim".',
+          },
+        },
+      ],
+    },
+    {
+      id: 'l2-safe-check',
+      title: 'The blunder check',
+      summary: 'A ten-second routine before every move: checks, captures and threats, for both sides.',
+      estMinutes: 10,
+      blocks: [
+        {
+          type: 'text',
+          md: md(`
+            A **blunder** is a move that throws away material or the game. Even world champions blunder, but they blunder much less, because they check before they move.
+
+            Before you play the move you have chosen, imagine it on the board and look for:
+
+            1. **Checks**: what checks can my opponent give now?
+            2. **Captures**: what can my opponent capture now? Is anything left undefended?
+            3. **Threats**: what is my opponent threatening, and what will my move threaten?
+
+            Do it for **your** moves too: your own checks, captures and threats are where your winning chances come from.
+          `),
+        },
+        {
+          type: 'tip',
+          title: 'Checks, Captures, Threats',
+          md: md(`
+            Say it in your head before every move: **Checks, Captures, Threats.** Forcing moves come first because they give your opponent the fewest choices, and they are the moves you are most likely to overlook.
+          `),
+        },
+        {
+          type: 'line',
+          moves: ['d4', 'e5', 'dxe5', 'Nc6', 'Nf3', 'Qe7', 'Bf4', 'Qb4+', 'Bd2', 'Qxb2', 'Bc3', 'Bb4', 'Qd2', 'Bxc3', 'Qxc3', 'Qc1#'],
+          caption: 'The Englund Gambit trap: White skips the blunder check twice.',
+          notes: {
+            7: 'A natural developing move, but White forgot to look at Black\'s checks.',
+            8: 'Check! The queen attacks the king, the bishop on f4 and the pawn on b2 all at once.',
+            10: 'Black grabs the pawn and now attacks the rook on a1 and the knight on b1.',
+            11: 'White attacks the queen, but again forgets to ask what Black threatens next.',
+            12: 'A pin! Black\'s bishop pins the c3-bishop to the white king, so it is no longer allowed to take the queen. Now ...Qxa1 is threatened.',
+            14: 'Black takes the defender of c1.',
+            16: 'Checkmate. White\'s king is still on e1, and every one of these disasters started with a move made without a blunder check.',
+          },
+        },
+        {
+          type: 'board',
+          fen: '2b1r1k1/pp3ppp/8/8/n7/2N5/PP3PPP/3Q2K1 w - - 0 1',
+          arrows: [['e8', 'e1']],
+          highlights: ['e1'],
+          caption: 'White\'s queen on d1 is the only piece guarding e1. If she leaves the back rank, ...Re1 is checkmate.',
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-safe-check-ex1',
+            prompt: 'Black\'s knight on a4 is hanging, and two of your pieces can take it. White to move: capture it safely.',
+            fen: '2b1r1k1/pp3ppp/8/8/n7/2N5/PP3PPP/3Q2K1 w - - 0 1',
+            solution: ['Nxa4'],
+            hint: 'Do the blunder check for each capture. After you take, what checks does Black have?',
+            explanation: 'Nxa4 wins the knight safely. Qxa4?? looks just as good, but after it Black has a check: ...Re1#, because the queen has left the back rank. Always look at your opponent\'s checks before you capture.',
+          },
+        },
+        {
+          type: 'exercise',
+          exercise: {
+            id: 'l2-safe-check-ex2',
+            prompt: 'From the Englund Gambit trap: White has just played 6.Bc3?, attacking your queen. Black to move: punish it.',
+            fen: 'r1b1kbnr/pppp1ppp/2n5/4P3/8/2B2N2/PqP1PPPP/RN1QKB1R b KQkq - 1 6',
+            solution: ['Bb4'],
+            hint: 'Do not move the queen. Bring another piece into the attack on c3.',
+            explanation: '...Bb4! pins the bishop on c3 to the king, so it cannot take your queen. Now ...Qxa1 is coming. If 7.Qd2, then ...Bxc3 8.Qxc3 Qc1# is mate. White should have asked "What does Black threaten?" one move earlier.',
+          },
+        },
+      ],
+    },
+  ],
+}
+
+export const level2: Module[] = [openingModule, safetyModule]
